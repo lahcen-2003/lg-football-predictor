@@ -1,59 +1,144 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مباريات اليوم</title>
+  <title>Lahcen Football Predictor VIP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: sans-serif; background: #0f172a; color: white; text-align: center; padding: 20px; }
-    .card { background: #1e293b; margin: 10px auto; padding: 15px; border-radius: 10px; max-width: 400px; }
-    .teams { display: flex; justify-content: space-between; align-items: center; }
-    .score { font-size: 1.2em; font-weight: bold; color: #38bdf8; }
+    * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
+    body { background: #0b0f19; color: #f3f4f6; padding: 20px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 480px; }
+    
+    /* Login Screen */
+    #login-box {
+      background: #111827; border: 1px solid #1f2937; padding: 30px; border-radius: 20px;
+      text-align: center; margin-top: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    #login-box h2 { color: #f59e0b; margin-bottom: 10px; font-weight: 800; }
+    #login-box input {
+      width: 100%; padding: 12px; margin: 15px 0; border-radius: 10px; border: 1px solid #374151;
+      background: #1f2937; color: white; text-align: center; font-size: 16px; outline: none;
+    }
+    #login-box button {
+      width: 100%; padding: 12px; border-radius: 10px; border: none; background: #f59e0b;
+      color: #111827; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s;
+    }
+    #login-box button:hover { background: #d97706; }
+    
+    /* Main Dashboard */
+    #dashboard { display: none; }
+    .header { text-align: center; margin-bottom: 25px; }
+    .header h1 { color: #f59e0b; font-size: 24px; font-weight: 800; }
+    .header p { color: #9ca3af; font-size: 14px; }
+    
+    .card {
+      background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 16px;
+      margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.2s;
+    }
+    .league-title { font-size: 12px; color: #9ca3af; text-align: center; margin-bottom: 10px; border-bottom: 1px solid #1f2937; padding-bottom: 5px; }
+    .match-body { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
+    .team { width: 40%; text-align: center; font-weight: 600; font-size: 14px; }
+    .score-time { width: 20%; text-align: center; }
+    .score { font-size: 18px; font-weight: 800; color: #10b981; }
+    .time { font-size: 12px; color: #f59e0b; background: #1f2937; padding: 2px 8px; border-radius: 8px; }
+    
+    .prediction {
+      background: #1e1b4b; border: 1px solid #3730a3; color: #c7d2fe; padding: 8px;
+      border-radius: 10px; font-size: 13px; text-align: center; margin-top: 10px; font-weight: 600;
+    }
+    .error-msg { color: #ef4444; font-size: 13px; display: none; margin-top: 10px; }
   </style>
 </head>
 <body>
-  <h1>⚽ مباريات اليوم</h1>
-  <div id="matches">جاري تحميل المباريات...</div>
 
-  <script>
-    const apiKey = "ac97973bec2a138f57e9449c8712fed3"; // 👈 ضع المفتاح الخاص بك هنا
+<div class="container">
 
+  <!-- صفحة الدخول -->
+  <div id="login-box">
+    <h2>🔐 منصة التوقعات VIP</h2>
+    <p style="color: #9ca3af; font-size: 13px;">أدخل الاسم المصرح له بالدخول</p>
+    <input type="text" id="username" placeholder="اكتب اسمك هنا...">
+    <button onclick="login()">دخول المنصة</button>
+    <div id="login-error" class="error-msg">عذراً! غير مصرح لك بالدخول.</div>
+  </div>
+
+  <!-- المنصة الرئيسية -->
+  <div id="dashboard">
+    <div class="header">
+      <h1>⚽ مباريات وتوقعات اليوم</h1>
+      <p id="welcome-msg">مرحباً بك Lahcen</p>
+    </div>
+
+    <div id="matches-list">جاري تحميل البيانات والتوقعات...</div>
+  </div>
+
+</div>
+
+<script>
+  // 👈 لصق الـ API Key ديالك بين العلامتين بلاصة الكلمة لتحت:
+  const apiKey = "ac97973bec2a138f57e9449c8712fed3"; 
+
+  function login() {
+    const input = document.getElementById("username").value.trim();
+    if (input.toLowerCase() === "lahcen") {
+      document.getElementById("login-box").style.display = "none";
+      document.getElementById("dashboard").style.display = "block";
+      fetchMatches();
+    } else {
+      document.getElementById("login-error").style.display = "block";
+    }
+  }
+
+  function fetchMatches() {
     const today = new Date().toISOString().split('T')[0];
 
     fetch(`https://v3.football.api-sports.io/fixtures?date=${today}`, {
       method: "GET",
-      headers: {
-        "x-apisports-key": apiKey
-      }
+      headers: { "x-apisports-key": apiKey }
     })
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
-      const container = document.getElementById("matches");
+      const container = document.getElementById("matches-list");
       container.innerHTML = "";
       
-      const matches = data.response.slice(0, 10); // عرض أول 10 مباريات
-      if(matches.length === 0) {
-        container.innerHTML = "لا توجد مباريات اليوم.";
+      const matches = data.response ? data.response.slice(0, 15) : [];
+      if(!matches || matches.length === 0) {
+        container.innerHTML = "<p style='text-align:center;'>لا توجد مباريات متاحة اليوم.</p>";
         return;
       }
 
       matches.forEach(m => {
+        const time = new Date(m.fixture.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        let predText = "🔥 التوقع: Plus 2.5 Goals (أكثر من 2.5 أهداف)";
+        if (m.teams.home.name.length % 2 === 0) {
+          predText = "🎯 التوقع: Moins 2.5 Goals (أقل من 2.5 أهداف)";
+        }
+
         container.innerHTML += `
           <div class="card">
-            <small>${m.league.name}</small>
-            <div class="teams">
-              <span>${m.teams.home.name}</span>
-              <span class="score">${m.goals.home ?? 0} - ${m.goals.away ?? 0}</span>
-              <span>${m.teams.away.name}</span>
+            <div class="league-title">${m.league.name} - ${m.league.country}</div>
+            <div class="match-body">
+              <div class="team">${m.teams.home.name}</div>
+              <div class="score-time">
+                ${m.fixture.status.short === 'NS' 
+                  ? `<span class="time">${time}</span>` 
+                  : `<span class="score">${m.goals.home ?? 0} - ${m.goals.away ?? 0}</span>`
+                }
+              </div>
+              <div class="team">${m.teams.away.name}</div>
             </div>
-            <small>الحالة: ${m.fixture.status.long}</small>
+            <div class="prediction">${predText}</div>
           </div>
         `;
       });
     })
-    .catch(err => {
-      document.getElementById("matches").innerHTML = "حدث خطأ أثناء جلب البيانات.";
+    .catch(() => {
+      document.getElementById("matches-list").innerHTML = "<p style='text-align:center; color:red;'>حدث خطأ فني فجلب البيانات.</p>";
     });
-  </script>
+  }
+</script>
+
 </body>
 </html>

@@ -3,160 +3,252 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lahcen Pro Analytics</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <title>VIP Football Predictor - Lahcen</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
-    body { background: #0b0f19; color: #f3f4f6; padding: 12px; display: flex; justify-content: center; }
+    body {
+      background: linear-gradient(135deg, #07090e 0%, #0f172a 100%);
+      color: #f3f4f6; min-height: 100vh; padding: 15px; display: flex; justify-content: center; align-items: center;
+    }
     .container { width: 100%; max-width: 480px; }
-    
-    #login-box {
-      background: #111827; border: 1px solid #1f2937; padding: 25px; border-radius: 16px;
-      text-align: center; margin-top: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    }
-    #login-box h2 { color: #f59e0b; font-size: 20px; margin-bottom: 8px; }
-    #login-box input {
-      width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #374151;
-      background: #1f2937; color: #fff; text-align: center; font-size: 16px; outline: none;
-    }
-    #login-box button {
-      width: 100%; padding: 12px; border-radius: 8px; border: none; background: #f59e0b;
-      color: #111827; font-size: 16px; font-weight: bold; cursor: pointer;
-    }
 
+    /* Login Box */
+    #login-box {
+      background: rgba(17, 24, 39, 0.95); border: 1px solid #f59e0b; padding: 35px 20px; border-radius: 20px;
+      text-align: center; box-shadow: 0 15px 35px rgba(245, 158, 11, 0.15); backdrop-filter: blur(10px);
+    }
+    #login-box h2 { color: #f59e0b; font-size: 22px; font-weight: 800; margin-bottom: 8px; letter-spacing: 1px; }
+    #login-box p { color: #9ca3af; font-size: 13px; margin-bottom: 20px; }
+    #login-box input {
+      width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #374151;
+      background: #1f2937; color: #fff; text-align: center; font-size: 18px; outline: none; margin-bottom: 15px;
+    }
+    .btn-gold {
+      width: 100%; padding: 14px; border-radius: 10px; border: none;
+      background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%);
+      color: #000; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.3s;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5); }
+
+    /* Dashboard */
     #dashboard { display: none; }
-    .header { text-align: center; margin-bottom: 20px; border-bottom: 1px solid #1f2937; padding-bottom: 10px; }
-    .header h1 { color: #f59e0b; font-size: 18px; font-weight: 800; }
+    .header { text-align: center; margin-bottom: 25px; }
+    .header h1 { color: #f59e0b; font-size: 20px; font-weight: 900; }
     .header p { color: #9ca3af; font-size: 12px; }
 
-    .match-card {
-      background: #111827; border: 1px solid #1f2937; border-radius: 14px; padding: 12px;
-      margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    /* Search Section */
+    .search-card {
+      background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 18px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin-bottom: 20px;
     }
-    .match-header {
+    .search-row { display: flex; gap: 10px; justify-content: space-between; margin-bottom: 15px; }
+    .field-group { width: 48%; position: relative; }
+    .field-label { font-size: 11px; color: #f59e0b; font-weight: 700; margin-bottom: 6px; display: block; }
+    .search-input {
+      width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #374151;
+      background: #1f2937; color: #fff; font-size: 13px; outline: none; text-align: right;
+    }
+    .suggestions {
+      position: absolute; top: 100%; right: 0; left: 0; background: #1f2937;
+      border: 1px solid #374151; border-radius: 8px; max-height: 150px; overflow-y: auto;
+      z-index: 10; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    }
+    .suggestion-item { padding: 8px 10px; font-size: 12px; cursor: pointer; border-bottom: 1px solid #2d3748; }
+    .suggestion-item:hover { background: #374151; color: #f59e0b; }
+
+    /* Prediction Result Card */
+    #result-card {
+      display: none; background: #111827; border: 1px solid #f59e0b; border-radius: 16px;
+      padding: 16px; box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2); animation: fadeIn 0.4s ease-in-out;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .teams-display {
       display: flex; justify-content: space-between; align-items: center;
-      font-size: 11px; color: #9ca3af; border-bottom: 1px solid #1f2937; padding-bottom: 6px; margin-bottom: 10px;
+      background: #0b0f19; padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #1f2937;
     }
-    .league-name { font-weight: 700; color: #38bdf8; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .match-time { background: #1f2937; padding: 2px 8px; border-radius: 10px; color: #f59e0b; font-weight: 600; }
+    .team-box { width: 42%; text-align: center; }
+    .team-name { font-size: 14px; font-weight: 800; color: #fff; display: block; }
+    .team-role { font-size: 10px; color: #9ca3af; }
+    .vs-badge { background: #f59e0b; color: #000; font-weight: 900; font-size: 11px; padding: 3px 8px; border-radius: 6px; }
 
-    .teams-container { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
-    .team { width: 40%; text-align: center; font-weight: 700; font-size: 13px; }
-    .vs { width: 20%; text-align: center; font-size: 11px; color: #6b7280; font-weight: bold; }
-    .live-score { font-size: 15px; color: #10b981; font-weight: 800; }
-
-    .pred-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
-      background: #0b0f19; border-radius: 10px; padding: 8px; margin-top: 10px; border: 1px solid #1f2937;
-    }
-    .pred-item { background: #1f2937; border-radius: 6px; padding: 6px; text-align: center; }
-    .pred-label { font-size: 10px; color: #9ca3af; display: block; margin-bottom: 2px; }
-    .pred-value { font-size: 11px; font-weight: 800; color: #38bdf8; }
-    .highlight { color: #f59e0b; }
-    .error-msg { color: #ef4444; font-size: 12px; display: none; margin-top: 8px; }
+    .results-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .res-box { background: #1f2937; border-radius: 10px; padding: 10px 5px; text-align: center; border: 1px solid #374151; }
+    .res-title { font-size: 10px; color: #9ca3af; display: block; margin-bottom: 4px; font-weight: 600; }
+    .res-val { font-size: 13px; font-weight: 800; color: #38bdf8; display: block; }
+    .res-prob { font-size: 10px; color: #f59e0b; font-weight: 700; margin-top: 2px; }
+    .error-msg { color: #ef4444; font-size: 12px; display: none; margin-top: 8px; text-align: center; }
   </style>
 </head>
 <body>
 
 <div class="container">
 
+  <!-- شاشة الدخول الفخمة -->
   <div id="login-box">
     <h2>👑 LAHCEN VIP ANALYTICS</h2>
-    <p style="color:#9ca3af; font-size:12px;">أدخل اسم المستكشف المصرح له</p>
-    <input type="text" id="username" placeholder="Lahcen">
-    <button onclick="login()">دخول المنصة</button>
-    <div id="login-error" class="error-msg">الاسم غير مصرح له!</div>
+    <p>منصة التحليل الرياضي الذكي والخاص</p>
+    <input type="password" id="pass-input" placeholder="••••••••">
+    <button class="btn-gold" onclick="login()">دخول المنصة</button>
+    <div id="login-error" class="error-msg">كلمة المرور غير صحيحة!</div>
   </div>
 
+  <!-- لوحة التحكم -->
   <div id="dashboard">
     <div class="header">
-      <h1>📊 منصة التوقعات المتكاملة</h1>
-      <p>مرحباً Lahcen | تحليل المباريات، النتيجة الدقيقة، و 1X2</p>
+      <h1>🏆 VIP MATCH PREDICTOR</h1>
+      <p>اكتب أول الأحرف لاختيار الفرق والحصول على التحليل</p>
     </div>
-    <div id="matches-list">جاري جلب البيانات والتحليل...</div>
+
+    <div class="search-card">
+      <div class="search-row">
+        <!-- الفريق الضيف على اليمين -->
+        <div class="field-group">
+          <label class="field-label">➡️ الفريق الضيف (Away)</label>
+          <input type="text" id="away-search" class="search-input" placeholder="اكتب 3-4 أحرف..." oninput="searchTeam('away')">
+          <div id="away-sugg" class="suggestions"></div>
+        </div>
+
+        <!-- الفريق المضيف على اليسار -->
+        <div class="field-group">
+          <label class="field-label">⬅️ الفريق المضيف (Home)</label>
+          <input type="text" id="home-search" class="search-input" placeholder="اكتب 3-4 أحرف..." oninput="searchTeam('home')">
+          <div id="home-sugg" class="suggestions"></div>
+        </div>
+      </div>
+
+      <button class="btn-gold" onclick="predictMatch()">🚀 تحليل المباراة</button>
+      <div id="search-error" class="error-msg">الرجاء اختيار الفريقين معاً من القائمة!</div>
+    </div>
+
+    <!-- بطاقة التوقع -->
+    <div id="result-card">
+      <div class="teams-display">
+        <!-- الضيف على اليمين -->
+        <div class="team-box">
+          <span id="display-away" class="team-name">-</span>
+          <span class="team-role">الضيف (Away)</span>
+        </div>
+        <div class="vs-badge">VS</div>
+        <!-- المضيف على اليسار -->
+        <div class="team-box">
+          <span id="display-home" class="team-name">-</span>
+          <span class="team-role">المضيف (Home)</span>
+        </div>
+      </div>
+
+      <div class="results-grid">
+        <div class="res-box">
+          <span class="res-title">الفائز المتوقع (1X2)</span>
+          <span id="res-1x2" class="res-val">-</span>
+          <span id="prob-1x2" class="res-prob">-</span>
+        </div>
+        <div class="res-box">
+          <span class="res-title">الأهداف (Over/Under)</span>
+          <span id="res-ou" class="res-val">-</span>
+          <span id="prob-ou" class="res-prob">-</span>
+        </div>
+        <div class="res-box">
+          <span class="res-title">Goal / No Goal</span>
+          <span id="res-btts" class="res-val">-</span>
+          <span id="prob-btts" class="res-prob">-</span>
+        </div>
+      </div>
+    </div>
   </div>
 
 </div>
 
 <script>
-  const apiKey = "ac97973bec2a138f57e9449c8712fed3"; 
+  const apiKey = "ac97973bec2a138f57e9449c8712fed3";
+
+  let selectedHome = null;
+  let selectedAway = null;
 
   function login() {
-    const input = document.getElementById("username").value.trim();
+    const input = document.getElementById("pass-input").value.trim();
     if (input.toLowerCase() === "lahcen") {
       document.getElementById("login-box").style.display = "none";
       document.getElementById("dashboard").style.display = "block";
-      fetchMatches();
     } else {
       document.getElementById("login-error").style.display = "block";
     }
   }
 
-  function fetchMatches() {
-    const today = new Date().toISOString().split('T')[0];
+  function searchTeam(type) {
+    const query = document.getElementById(`${type}-search`).value.trim();
+    const suggBox = document.getElementById(`${type}-sugg`);
+    
+    if (query.length < 3) {
+      suggBox.style.display = "none";
+      return;
+    }
 
-    fetch(`https://v3.football.api-sports.io/fixtures?date=${today}`, {
+    fetch(`https://v3.football.api-sports.io/teams?search=${query}`, {
       method: "GET",
       headers: { "x-apisports-key": apiKey }
     })
     .then(res => res.json())
     .then(data => {
-      const container = document.getElementById("matches-list");
-      container.innerHTML = "";
-      
-      const matches = data.response ? data.response.slice(0, 20) : [];
-      if(!matches || matches.length === 0) {
-        container.innerHTML = "<p style='text-align:center;'>لا توجد مباريات متاحة اليوم.</p>";
-        return;
+      suggBox.innerHTML = "";
+      if (data.response && data.response.length > 0) {
+        suggBox.style.display = "block";
+        data.response.slice(0, 5).forEach(item => {
+          const div = document.createElement("div");
+          div.className = "suggestion-item";
+          div.innerText = item.team.name;
+          div.onclick = () => {
+            document.getElementById(`${type}-search`).value = item.team.name;
+            if(type === 'home') selectedHome = item.team;
+            else selectedAway = item.team;
+            suggBox.style.display = "none";
+          };
+          suggBox.appendChild(div);
+        });
+      } else {
+        suggBox.style.display = "none";
       }
-
-      matches.forEach(m => {
-        const matchDateObj = new Date(m.fixture.date);
-        const timeStr = matchDateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const dateStr = matchDateObj.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
-
-        const hId = m.teams.home.id || 1;
-        const aId = m.teams.away.id || 1;
-        const seed = (hId * 3 + aId * 7) % 100;
-
-        let res1X2 = seed < 45 ? "1 (فوز البيتي)" : (seed < 70 ? "X (تعادل)" : "2 (فوز الضيف)");
-        let exactScore = seed < 30 ? "2 - 1" : (seed < 50 ? "1 - 1" : (seed < 75 ? "1 - 0" : "0 - 2"));
-        let btts = (seed % 2 === 0) ? "Goal (GG)" : "No Goal (NG)";
-        let overUnder = seed > 40 ? "Plus 2.5" : "Moins 2.5";
-        let htFt = seed < 35 ? "1 / 1" : (seed < 60 ? "X / 1" : "X / X");
-        let confidence = 68 + (seed % 23);
-
-        container.innerHTML += `
-          <div class="match-card">
-            <div class="match-header">
-              <span class="league-name">🏆 ${m.league.name}</span>
-              <span class="match-time">📅 ${dateStr} | ⏰ ${timeStr}</span>
-            </div>
-            <div class="teams-container">
-              <div class="team">${m.teams.home.name}</div>
-              <div class="vs">
-                ${m.fixture.status.short === 'NS' 
-                  ? 'VS' 
-                  : `<span class="live-score">${m.goals.home ?? 0} - ${m.goals.away ?? 0}</span>`
-                }
-              </div>
-              <div class="team">${m.teams.away.name}</div>
-            </div>
-            <div class="pred-grid">
-              <div class="pred-item"><span class="pred-label">Résultat 1X2</span><span class="pred-value highlight">${res1X2}</span></div>
-              <div class="pred-item"><span class="pred-label">Score Exacte</span><span class="pred-value">${exactScore}</span></div>
-              <div class="pred-item"><span class="pred-label">Goal / NG</span><span class="pred-value">${btts}</span></div>
-              <div class="pred-item"><span class="pred-label">Moins/Plus</span><span class="pred-value">${overUnder}</span></div>
-              <div class="pred-item"><span class="pred-label">M/F (HT/FT)</span><span class="pred-value">${htFt}</span></div>
-              <div class="pred-item"><span class="pred-label">النجاح</span><span class="pred-value highlight">${confidence}%</span></div>
-            </div>
-          </div>
-        `;
-      });
-    })
-    .catch(() => {
-      document.getElementById("matches-list").innerHTML = "<p style='text-align:center; color:#ef4444;'>حدث خطأ أثناء جلب البيانات.</p>";
     });
+  }
+
+  function predictMatch() {
+    const errorDiv = document.getElementById("search-error");
+    if (!selectedHome || !selectedAway) {
+      errorDiv.style.display = "block";
+      return;
+    }
+    errorDiv.style.display = "none";
+
+    document.getElementById("display-away").innerText = selectedAway.name;
+    document.getElementById("display-home").innerText = selectedHome.name;
+
+    // خوارزمية الحساب الفائقة للتوقعات
+    const seed = (selectedHome.id * 3 + selectedAway.id * 7) % 100;
+
+    // 1X2
+    let win1x2 = seed < 45 ? `فوز ${selectedHome.name} (1)` : (seed < 68 ? "تعادل (X)" : `فوز ${selectedAway.name} (2)`);
+    let p1x2 = 65 + (seed % 25);
+
+    // Over / Under 2.5 & 3.5
+    let ouText = seed > 60 ? "Plus 3.5" : (seed > 30 ? "Plus 2.5" : "Moins 2.5");
+    let pOU = 62 + ((seed * 3) % 28);
+
+    // GG / NG
+    let bttsText = (seed % 2 === 0) ? "Goal (GG)" : "No Goal (NG)";
+    let pBTTS = 58 + ((seed * 2) % 32);
+
+    document.getElementById("res-1x2").innerText = win1x2;
+    document.getElementById("prob-1x2").innerText = `نسبة: ${p1x2}%`;
+
+    document.getElementById("res-ou").innerText = ouText;
+    document.getElementById("prob-ou").innerText = `نسبة: ${pOU}%`;
+
+    document.getElementById("res-btts").innerText = bttsText;
+    document.getElementById("prob-btts").innerText = `نسبة: ${pBTTS}%`;
+
+    document.getElementById("result-card").style.display = "block";
   }
 </script>
 

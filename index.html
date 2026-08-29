@@ -44,19 +44,12 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin-bottom: 20px;
     }
     .search-row { display: flex; gap: 10px; justify-content: space-between; margin-bottom: 15px; }
-    .field-group { width: 48%; position: relative; }
+    .field-group { width: 48%; }
     .field-label { font-size: 11px; color: #f59e0b; font-weight: 700; margin-bottom: 6px; display: block; }
     .search-input {
-      width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #374151;
-      background: #1f2937; color: #fff; font-size: 13px; outline: none; text-align: right;
+      width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #374151;
+      background: #1f2937; color: #fff; font-size: 13px; outline: none; text-align: center;
     }
-    .suggestions {
-      position: absolute; top: 100%; right: 0; left: 0; background: #1f2937;
-      border: 1px solid #374151; border-radius: 8px; max-height: 150px; overflow-y: auto;
-      z-index: 10; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-    }
-    .suggestion-item { padding: 8px 10px; font-size: 12px; cursor: pointer; border-bottom: 1px solid #2d3748; }
-    .suggestion-item:hover { background: #374151; color: #f59e0b; }
 
     /* Prediction Result Card */
     #result-card {
@@ -100,7 +93,7 @@
   <div id="dashboard">
     <div class="header">
       <h1>🏆 VIP MATCH PREDICTOR</h1>
-      <p>اكتب أول الأحرف لاختيار الفرق والحصول على التحليل</p>
+      <p>اكتب اسم الفريقين مباشرة للحصول على التوقع</p>
     </div>
 
     <div class="search-card">
@@ -108,20 +101,18 @@
         <!-- الفريق الضيف على اليمين -->
         <div class="field-group">
           <label class="field-label">➡️ الفريق الضيف (Away)</label>
-          <input type="text" id="away-search" class="search-input" placeholder="اكتب 3-4 أحرف..." oninput="searchTeam('away')">
-          <div id="away-sugg" class="suggestions"></div>
+          <input type="text" id="away-team" class="search-input" placeholder="اسم الفريق الضيف">
         </div>
 
         <!-- الفريق المضيف على اليسار -->
         <div class="field-group">
           <label class="field-label">⬅️ الفريق المضيف (Home)</label>
-          <input type="text" id="home-search" class="search-input" placeholder="اكتب 3-4 أحرف..." oninput="searchTeam('home')">
-          <div id="home-sugg" class="suggestions"></div>
+          <input type="text" id="home-team" class="search-input" placeholder="اسم الفريق المضيف">
         </div>
       </div>
 
       <button class="btn-gold" onclick="predictMatch()">🚀 تحليل المباراة</button>
-      <div id="search-error" class="error-msg">الرجاء اختيار الفريقين معاً من القائمة!</div>
+      <div id="search-error" class="error-msg">الرجاء كتابة اسم الفريقين أولاً!</div>
     </div>
 
     <!-- بطاقة التوقع -->
@@ -142,7 +133,7 @@
 
       <div class="results-grid">
         <div class="res-box">
-          <span class="res-title">الفائز المتوقع (1X2)</span>
+          <span class="res-title">النتيجة (1X2)</span>
           <span id="res-1x2" class="res-val">-</span>
           <span id="prob-1x2" class="res-prob">-</span>
         </div>
@@ -163,11 +154,6 @@
 </div>
 
 <script>
-  const apiKey = "ac97973bec2a138f57e9449c8712fed3";
-
-  let selectedHome = null;
-  let selectedAway = null;
-
   function login() {
     const user = document.getElementById("user-input").value.trim();
     const pass = document.getElementById("pass-input").value.trim();
@@ -180,63 +166,43 @@
     }
   }
 
-  function searchTeam(type) {
-    const query = document.getElementById(`${type}-search`).value.trim();
-    const suggBox = document.getElementById(`${type}-sugg`);
-    
-    if (query.length < 3) {
-      suggBox.style.display = "none";
-      return;
+  function getHash(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash << 5) - hash + str.charCodeAt(i);
+      hash |= 0;
     }
-
-    fetch(`https://v3.football.api-sports.io/teams?search=${query}`, {
-      method: "GET",
-      headers: { "x-apisports-key": apiKey }
-    })
-    .then(res => res.json())
-    .then(data => {
-      suggBox.innerHTML = "";
-      if (data.response && data.response.length > 0) {
-        suggBox.style.display = "block";
-        data.response.slice(0, 5).forEach(item => {
-          const div = document.createElement("div");
-          div.className = "suggestion-item";
-          div.innerText = item.team.name;
-          div.onclick = () => {
-            document.getElementById(`${type}-search`).value = item.team.name;
-            if(type === 'home') selectedHome = item.team;
-            else selectedAway = item.team;
-            suggBox.style.display = "none";
-          };
-          suggBox.appendChild(div);
-        });
-      } else {
-        suggBox.style.display = "none";
-      }
-    });
+    return Math.abs(hash);
   }
 
   function predictMatch() {
+    const homeName = document.getElementById("home-team").value.trim();
+    const awayName = document.getElementById("away-team").value.trim();
     const errorDiv = document.getElementById("search-error");
-    if (!selectedHome || !selectedAway) {
+
+    if (!homeName || !awayName) {
       errorDiv.style.display = "block";
       return;
     }
     errorDiv.style.display = "none";
 
-    document.getElementById("display-away").innerText = selectedAway.name;
-    document.getElementById("display-home").innerText = selectedHome.name;
+    document.getElementById("display-home").innerText = homeName;
+    document.getElementById("display-away").innerText = awayName;
 
-    const seed = (selectedHome.id * 3 + selectedAway.id * 7) % 100;
+    // خوارزمية ذكية تعتمد على أحرف الأسماء لإعطاء نتيجة ثابتة
+    const seed = (getHash(homeName.toLowerCase()) * 3 + getHash(awayName.toLowerCase()) * 7) % 100;
 
-    let win1x2 = seed < 45 ? `فوز ${selectedHome.name} (1)` : (seed < 68 ? "تعادل (X)" : `فوز ${selectedAway.name} (2)`);
-    let p1x2 = 65 + (seed % 25);
+    // 1X2
+    let win1x2 = seed < 40 ? "1 (فوز المضيف)" : (seed < 65 ? "X (تعادل)" : "2 (فوز الضيف)");
+    let p1x2 = 62 + (seed % 28);
 
-    let ouText = seed > 60 ? "Plus 3.5" : (seed > 30 ? "Plus 2.5" : "Moins 2.5");
-    let pOU = 62 + ((seed * 3) % 28);
+    // Over / Under 2.5
+    let ouText = seed > 45 ? "Plus 2.5" : "Moins 2.5";
+    let pOU = 60 + ((seed * 3) % 30);
 
+    // GG / NG
     let bttsText = (seed % 2 === 0) ? "Goal (GG)" : "No Goal (NG)";
-    let pBTTS = 58 + ((seed * 2) % 32);
+    let pBTTS = 55 + ((seed * 2) % 35);
 
     document.getElementById("res-1x2").innerText = win1x2;
     document.getElementById("prob-1x2").innerText = `نسبة: ${p1x2}%`;

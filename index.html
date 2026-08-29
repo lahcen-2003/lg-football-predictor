@@ -3,120 +3,93 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LAHCEN AI ANALYTICS VIP - FULL PROBABILITIES</title>
+  <title>LAHCEN VIP - REAL API INTEGRATION</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
-    body {
-      background: linear-gradient(135deg, #07090e 0%, #0f172a 100%);
-      color: #f3f4f6; min-height: 100vh; padding: 15px; display: flex; justify-content: center; align-items: flex-start;
-    }
+    body { background: linear-gradient(135deg, #07090e 0%, #0f172a 100%); color: #f3f4f6; min-height: 100vh; padding: 15px; display: flex; justify-content: center; align-items: flex-start; }
     .container { width: 100%; max-width: 550px; margin-top: 10px; }
-
-    /* Login Screen */
-    #login-box {
-      background: rgba(17, 24, 39, 0.95); border: 1px solid #f59e0b; padding: 35px 20px; border-radius: 20px;
-      text-align: center; box-shadow: 0 15px 35px rgba(245, 158, 11, 0.15); margin-top: 40px;
-    }
+    #login-box { background: rgba(17, 24, 39, 0.95); border: 1px solid #f59e0b; padding: 35px 20px; border-radius: 20px; text-align: center; box-shadow: 0 15px 35px rgba(245, 158, 11, 0.15); margin-top: 40px; }
     #login-box h2 { color: #f59e0b; font-size: 22px; font-weight: 800; margin-bottom: 8px; }
     #login-box p { color: #9ca3af; font-size: 13px; margin-bottom: 20px; }
-    .input-field {
-      width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #374151;
-      background: #1f2937; color: #fff; font-size: 15px; outline: none; margin-bottom: 12px; font-weight: bold;
-    }
-
-    /* Main Dashboard */
+    .input-field { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #374151; background: #1f2937; color: #fff; font-size: 15px; outline: none; margin-bottom: 12px; font-weight: bold; text-align: center; }
     #dashboard { display: none; }
     .header { text-align: center; margin-bottom: 20px; }
     .header h1 { color: #f59e0b; font-size: 22px; font-weight: 900; }
-    .header p { color: #9ca3af; font-size: 12px; }
-
+    .header p { color: #10b981; font-size: 12px; font-weight: bold; }
     .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .btn-logout { background: #374151; color: #ef4444; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; font-weight: bold; }
-
-    .card-box {
-      background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 18px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin-bottom: 20px;
-    }
+    .card-box { background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin-bottom: 20px; }
     .date-label { font-size: 12px; color: #f59e0b; font-weight: 700; display: block; margin-bottom: 5px; text-align: right; }
-    
-    .btn-gold {
-      width: 100%; padding: 14px; border-radius: 10px; border: none;
-      background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%);
-      color: #000; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.3s;
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); margin-top: 5px;
-    }
+    .btn-gold { width: 100%; padding: 14px; border-radius: 10px; border: none; background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%); color: #000; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); margin-top: 5px; }
     .btn-gold:hover { transform: translateY(-2px); }
-
-    /* Match Results Display */
-    .match-card {
-      background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 16px;
-      margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); border-right: 4px solid #f59e0b;
-    }
+    .match-card { background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 16px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); border-right: 4px solid #f59e0b; }
     .teams-header { text-align: center; font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #1f2937; }
     .teams-header span { color: #f59e0b; }
-
     .section-title { font-size: 13px; color: #38bdf8; font-weight: 800; margin: 12px 0 6px 0; text-align: right; border-right: 3px solid #38bdf8; padding-right: 8px; }
-    
     .prob-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
     .prob-table td { padding: 8px 10px; font-size: 12px; border-bottom: 1px solid #1f2937; }
     .prob-name { color: #d1d5db; font-weight: 700; text-align: right; }
     .prob-val { color: #10b981; font-weight: 900; text-align: left; }
     .prob-val.highlight { color: #f59e0b; font-size: 13px; }
-
     #loading { display: none; text-align: center; color: #f59e0b; padding: 15px; font-weight: bold; font-size: 13px; }
+    .api-settings { background: #1e1e1e; padding: 10px; border-radius: 10px; margin-bottom: 15px; border: 1px dashed #ef4444; }
   </style>
 </head>
 <body>
 
 <div class="container">
-
-  <!-- 1. شاشة تسجيل الدخول -->
   <div id="login-box">
     <h2>👑 LAHCEN VIP ENGINE</h2>
-    <p>منصة التحليل الشامل لجميع نسب الاحتمالات والتوقعات</p>
-    <input type="text" id="user-input" class="input-field" placeholder="اسم المستكشف (lahcen)" style="text-align:center;">
-    <input type="password" id="pass-input" class="input-field" placeholder="كلمة المرور (lahcen)" style="text-align:center;">
+    <p>بوابة التحليل المباشر (Real API Data)</p>
+    <input type="text" id="user-input" class="input-field" placeholder="اسم المستكشف (lahcen)">
+    <input type="password" id="pass-input" class="input-field" placeholder="كلمة المرور (lahcen)">
     <button class="btn-gold" onclick="login()">الدخول إلى المنصة 🚀</button>
   </div>
 
-  <!-- 2. لوحة التحكم الرئيسية -->
   <div id="dashboard">
     <div class="top-bar">
-      <span style="font-size: 11px; color: #10b981; font-weight: bold;">🟢 الجلسة مفعلة</span>
+      <span style="font-size: 11px; color: #10b981; font-weight: bold;">🟢 متصل بنجاح</span>
       <button class="btn-logout" onclick="logout()">تسجيل الخروج 🚪</button>
     </div>
 
     <div class="header">
-      <h1>🧠 LAHCEN AI PREDICTOR VIP</h1>
-      <p>تحليل كامل لجميع الخيارات (1X2, BTTS, Over/Under, Score Exacte)</p>
+      <h1>🧠 LAHCEN REAL ANALYTICS</h1>
+      <p id="api-status">⚠️ جاري التحقق من مفتاح API...</p>
     </div>
 
-    <!-- صندوق الإدخال -->
+    <!-- إعدادات API -->
+    <div class="api-settings">
+      <label class="date-label" style="color: #ef4444;">🔑 مفتاح API-Football الخاص بك:</label>
+      <input type="text" id="api-key" class="input-field" placeholder="ضع مفتاح API هنا..." onchange="saveApiKey()">
+      <p style="font-size: 10px; color: #9ca3af; text-align: center;">احصل عليه مجاناً من dashboard.api-football.com</p>
+    </div>
+
     <div class="card-box">
-      <div style="text-align: right; margin-bottom: 8px;">
-        <label class="date-label">🏠 الفريق المضيف (Home):</label>
-        <input type="text" id="home-team" class="input-field" placeholder="مثال: Real Madrid">
-      </div>
-      <div style="text-align: right; margin-bottom: 8px;">
-        <label class="date-label">✈️ الفريق الضيف (Away):</label>
-        <input type="text" id="away-team" class="input-field" placeholder="مثال: Barcelona">
-      </div>
-      <button class="btn-gold" onclick="analyzeMatch()">🤖 حساب جميع نسب التوقعات (+80%)</button>
+      <label class="date-label">🏠 الفريق المضيف (أو جزء من اسمه بالإنجليزية):</label>
+      <input type="text" id="home-team" class="input-field" placeholder="مثال: Real Madrid">
+      
+      <label class="date-label">✈️ الفريق الضيف:</label>
+      <input type="text" id="away-team" class="input-field" placeholder="مثال: Barcelona">
+      
+      <button class="btn-gold" onclick="analyzeMatch()">🤖 جلب الإحصائيات الحقيقية وتحليلها</button>
     </div>
 
-    <div id="loading">🔍 جاري فحص الإحصائيات وحساب النسب المئوية لكافة الخيارات...</div>
-
-    <!-- منطقة عرض النسب والتوقعات -->
+    <div id="loading">🔍 جاري الاتصال بخوادم API-Football لجلب النتائج المباشرة...</div>
     <div id="result-box"></div>
   </div>
-
 </div>
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     if (localStorage.getItem("lahcen_logged") === "true") {
       showMain();
+    }
+    const savedKey = localStorage.getItem("football_api_key");
+    if(savedKey) {
+      document.getElementById("api-key").value = savedKey;
+      document.getElementById("api-status").innerText = "✅ مفتاح API محفوظ وجاهز للعمل";
+      document.getElementById("api-status").style.color = "#10b981";
     }
   });
 
@@ -127,7 +100,7 @@
       localStorage.setItem("lahcen_logged", "true");
       showMain();
     } else {
-      alert("اسم المستكشف أو كلمة المرور غير صحيحة!");
+      alert("بيانات الدخول غير صحيحة!");
     }
   }
 
@@ -142,103 +115,134 @@
     document.getElementById("dashboard").style.display = "block";
   }
 
-  function analyzeMatch() {
-    var home = document.getElementById("home-team").value.trim();
-    var away = document.getElementById("away-team").value.trim();
-    var resultBox = document.getElementById("result-box");
-    var loading = document.getElementById("loading");
+  function saveApiKey() {
+    const key = document.getElementById("api-key").value.trim();
+    localStorage.setItem("football_api_key", key);
+    document.getElementById("api-status").innerText = "✅ تم حفظ المفتاح";
+    document.getElementById("api-status").style.color = "#10b981";
+  }
 
-    if (!home || !away) {
-      alert("المرجو إدخال اسم الفريق المضيف والضيف أولاً!");
-      return;
-    }
+  async function analyzeMatch() {
+    const home = document.getElementById("home-team").value.trim();
+    const away = document.getElementById("away-team").value.trim();
+    const apiKey = document.getElementById("api-key").value.trim();
+    const resultBox = document.getElementById("result-box");
+    const loading = document.getElementById("loading");
+
+    if (!home || !away) { alert("أدخل أسماء الفرق!"); return; }
+    if (!apiKey) { alert("ضروري تدخل مفتاح API باش يجيب بيانات حقيقية!"); return; }
 
     resultBox.innerHTML = "";
     loading.style.display = "block";
 
-    setTimeout(function() {
+    const headers = {
+      "x-apisports-key": apiKey,
+      "Content-Type": "application/json"
+    };
+
+    try {
+      // 1. البحث عن ID الفريق المضيف
+      const resHome = await fetch(`https://v3.football.api-sports.io/teams?search=${encodeURIComponent(home)}`, { headers });
+      const dataHome = await resHome.json();
+      if (!dataHome.response || dataHome.response.length === 0) throw new Error(`لم يتم العثور على فريق: ${home}`);
+      const homeId = dataHome.response[0].team.id;
+      const homeName = dataHome.response[0].team.name;
+
+      // 2. البحث عن ID الفريق الضيف
+      const resAway = await fetch(`https://v3.football.api-sports.io/teams?search=${encodeURIComponent(away)}`, { headers });
+      const dataAway = await resAway.json();
+      if (!dataAway.response || dataAway.response.length === 0) throw new Error(`لم يتم العثور على فريق: ${away}`);
+      const awayId = dataAway.response[0].team.id;
+      const awayName = dataAway.response[0].team.name;
+
+      // 3. جلب المواجهات المباشرة (Head to Head)
+      const resH2H = await fetch(`https://v3.football.api-sports.io/fixtures/headtohead?h2h=${homeId}-${awayId}&last=10`, { headers });
+      const dataH2H = await resH2H.json();
+      
+      let matches = dataH2H.response;
+      
       loading.style.display = "none";
 
-      // خوارزمية توليد نسب متناسقة ودقيقة اعتماداً على أسماء الفريقين
-      var seed = (home.length * 13 + away.length * 19) % 100;
+      if (!matches || matches.length === 0) {
+        resultBox.innerHTML = `<p style="text-align:center; color:#ef4444;">❌ لا توجد مواجهات سابقة مسجلة بين ${homeName} و ${awayName}.</p>`;
+        return;
+      }
 
-      // 1. نسب 1X2
-      var p1 = 40 + (seed % 25);
-      var pX = 15 + (seed % 15);
-      var p2 = 100 - p1 - pX;
+      // 4. تحليل البيانات الحقيقية المستخرجة
+      let homeWins = 0, awayWins = 0, draws = 0;
+      let over25 = 0, btts = 0;
+      let totalMatches = matches.length;
 
-      // 2. نسب الأهداف (Over / Under 2.5)
-      var pPlus25 = 55 + (seed % 30);
-      var pMoins25 = 100 - pPlus25;
+      matches.forEach(m => {
+        let hGoals = m.goals.home;
+        let aGoals = m.goals.away;
+        
+        if (hGoals === null || aGoals === null) return; // مباراة لم تلعب بعد
 
-      // 3. نسب التسجيل (Goal / No Goal - BTTS)
-      var pGoal = 52 + (seed % 32);
-      var pNoGoal = 100 - pGoal;
+        // 1X2
+        if (m.teams.home.id === homeId) {
+          if (hGoals > aGoals) homeWins++;
+          else if (hGoals < aGoals) awayWins++;
+          else draws++;
+        } else {
+          if (aGoals > hGoals) homeWins++;
+          else if (aGoals < hGoals) awayWins++;
+          else draws++;
+        }
 
-      // 4. نسب الشوط الأول / نهاية المباراة (M/F)
-      var pMF11 = Math.round(p1 * 0.65);
-      var pMFX1 = Math.round(p1 * 0.35);
-      var pMFXX = Math.round(pX * 0.70);
-      var pMF22 = Math.round(p2 * 0.65);
+        // الأهداف
+        if ((hGoals + aGoals) > 2.5) over25++;
+        if (hGoals > 0 && aGoals > 0) btts++;
+      });
 
-      // 5. النتيجة الدقيقة (Score Exacte)
-      var s21 = 22 + (seed % 10);
-      var s10 = 18 + (seed % 8);
-      var s11 = 16 + (seed % 6);
-      var s01 = 14 + (seed % 5);
-      var sOther = 100 - (s21 + s10 + s11 + s01);
+      // تحويل الإحصائيات الحقيقية إلى نسب مئوية
+      let p1 = Math.round((homeWins / totalMatches) * 100);
+      let p2 = Math.round((awayWins / totalMatches) * 100);
+      let pX = Math.round((draws / totalMatches) * 100);
+      
+      let pPlus25 = Math.round((over25 / totalMatches) * 100);
+      let pMoins25 = 100 - pPlus25;
+      
+      let pGoal = Math.round((btts / totalMatches) * 100);
+      let pNoGoal = 100 - pGoal;
 
-      var html = `
+      // تجنب نسب 0% (إعطاء هامش احتمالية صغير)
+      if (p1 === 0) { p1 = 15; p2 -= 10; pX -= 5; }
+      if (p2 === 0) { p2 = 15; p1 -= 10; pX -= 5; }
+      if (pX === 0) { pX = 20; p1 -= 10; p2 -= 10; }
+
+      // توليد البطاقة بناءً على الداتا الحقيقية
+      resultBox.innerHTML = `
         <div class="match-card">
-          <div class="teams-header">${home} <span>VS</span> ${away}</div>
+          <div class="teams-header">${homeName} <span>VS</span> ${awayName}</div>
+          <p style="text-align:center; font-size:10px; color:#10b981; margin-bottom:10px;">📊 بناءً على آخر ${totalMatches} مواجهات حقيقية</p>
 
-          <!-- 1X2 -->
           <div class="section-title">🎯 النتيجة النهائية (1X2)</div>
           <table class="prob-table">
-            <tr><td class="prob-name">فوز المضيف (1)</td><td class="prob-val ${p1 > 50 ? 'highlight' : ''}">${p1}%</td></tr>
-            <tr><td class="prob-name">التعادل (X)</td><td class="prob-val">${pX}%</td></tr>
-            <tr><td class="prob-name">فوز الضيف (2)</td><td class="prob-val ${p2 > 50 ? 'highlight' : ''}">${p2}%</td></tr>
+            <tr><td class="prob-name">فوز ${homeName} (1)</td><td class="prob-val ${p1 > 40 ? 'highlight' : ''}">${Math.abs(p1)}%</td></tr>
+            <tr><td class="prob-name">التعادل (X)</td><td class="prob-val">${Math.abs(pX)}%</td></tr>
+            <tr><td class="prob-name">فوز ${awayName} (2)</td><td class="prob-val ${p2 > 40 ? 'highlight' : ''}">${Math.abs(p2)}%</td></tr>
           </table>
 
-          <!-- Over / Under 2.5 -->
           <div class="section-title">⚽ مجموع الأهداف (2.5)</div>
           <table class="prob-table">
-            <tr><td class="prob-name">Plus 2.5 (أكثر من 2.5 أهداف)</td><td class="prob-val ${pPlus25 > 50 ? 'highlight' : ''}">${pPlus25}%</td></tr>
-            <tr><td class="prob-name">Moins 2.5 (أقل من 2.5 أهداف)</td><td class="prob-val ${pMoins25 > 50 ? 'highlight' : ''}">${pMoins25}%</td></tr>
+            <tr><td class="prob-name">Plus 2.5 (أكثر من 2.5)</td><td class="prob-val ${pPlus25 >= 50 ? 'highlight' : ''}">${pPlus25}%</td></tr>
+            <tr><td class="prob-name">Moins 2.5 (أقل من 2.5)</td><td class="prob-val ${pMoins25 >= 50 ? 'highlight' : ''}">${pMoins25}%</td></tr>
           </table>
 
-          <!-- Goal / No Goal -->
           <div class="section-title">🥅 التسجيل للفريقين (BTTS)</div>
           <table class="prob-table">
-            <tr><td class="prob-name">Gool (كلا الفريقين سيسجل)</td><td class="prob-val ${pGoal > 50 ? 'highlight' : ''}">${pGoal}%</td></tr>
-            <tr><td class="prob-name">No Gool (أحدهما أو كلاهما لن يسجل)</td><td class="prob-val ${pNoGoal > 50 ? 'highlight' : ''}">${pNoGoal}%</td></tr>
-          </table>
-
-          <!-- M/F -->
-          <div class="section-title">⏱️ الشوط الأول / نهاية المباراة (M/F)</div>
-          <table class="prob-table">
-            <tr><td class="prob-name">1 / 1 (مضيف / مضيف)</td><td class="prob-val">${pMF11}%</td></tr>
-            <tr><td class="prob-name">X / 1 (تعادل / مضيف)</td><td class="prob-val">${pMFX1}%</td></tr>
-            <tr><td class="prob-name">X / X (تعادل / تعادل)</td><td class="prob-val">${pMFXX}%</td></tr>
-            <tr><td class="prob-name">2 / 2 (ضيف / ضيف)</td><td class="prob-val">${pMF22}%</td></tr>
-          </table>
-
-          <!-- Score Exacte -->
-          <div class="section-title">📌 النتيجة الدقيقة المتوقعة (Score Exacte)</div>
-          <table class="prob-table">
-            <tr><td class="prob-name">2 - 1</td><td class="prob-val highlight">${s21}%</td></tr>
-            <tr><td class="prob-name">1 - 0</td><td class="prob-val">${s10}%</td></tr>
-            <tr><td class="prob-name">1 - 1</td><td class="prob-val">${s11}%</td></tr>
-            <tr><td class="prob-name">0 - 1</td><td class="prob-val">${s01}%</td></tr>
-            <tr><td class="prob-name">نتائج أخرى</td><td class="prob-val">${sOther}%</td></tr>
+            <tr><td class="prob-name">Gool (كلا الفريقين سيسجل)</td><td class="prob-val ${pGoal >= 50 ? 'highlight' : ''}">${pGoal}%</td></tr>
+            <tr><td class="prob-name">No Gool (أحدهما لن يسجل)</td><td class="prob-val ${pNoGoal >= 50 ? 'highlight' : ''}">${pNoGoal}%</td></tr>
           </table>
         </div>
       `;
 
-      resultBox.innerHTML = html;
-    }, 800);
+    } catch (error) {
+      loading.style.display = "none";
+      resultBox.innerHTML = `<p style="text-align:center; color:#ef4444; padding:15px;">❌ خطأ: ${error.message} <br> تأكد من اسم الفريق باللغة الإنجليزية أو صحة مفتاح API.</p>`;
+    }
   }
 </script>
-
 </body>
 </html>

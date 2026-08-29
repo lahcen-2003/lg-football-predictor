@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مباريات اليوم</title>
+  <style>
+    body { font-family: sans-serif; background: #0f172a; color: white; text-align: center; padding: 20px; }
+    .card { background: #1e293b; margin: 10px auto; padding: 15px; border-radius: 10px; max-width: 400px; }
+    .teams { display: flex; justify-content: space-between; align-items: center; }
+    .score { font-size: 1.2em; font-weight: bold; color: #38bdf8; }
+  </style>
+</head>
+<body>
+  <h1>⚽ مباريات اليوم</h1>
+  <div id="matches">جاري تحميل المباريات...</div>
+
+  <script>
+    const apiKey = "ac97973bec2a138f57e9449c8712fed3"; // 👈 ضع المفتاح الخاص بك هنا
+
+    const today = new Date().toISOString().split('T')[0];
+
+    fetch(`https://v3.football.api-sports.io/fixtures?date=${today}`, {
+      method: "GET",
+      headers: {
+        "x-apisports-key": apiKey
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      const container = document.getElementById("matches");
+      container.innerHTML = "";
+      
+      const matches = data.response.slice(0, 10); // عرض أول 10 مباريات
+      if(matches.length === 0) {
+        container.innerHTML = "لا توجد مباريات اليوم.";
+        return;
+      }
+
+      matches.forEach(m => {
+        container.innerHTML += `
+          <div class="card">
+            <small>${m.league.name}</small>
+            <div class="teams">
+              <span>${m.teams.home.name}</span>
+              <span class="score">${m.goals.home ?? 0} - ${m.goals.away ?? 0}</span>
+              <span>${m.teams.away.name}</span>
+            </div>
+            <small>الحالة: ${m.fixture.status.long}</small>
+          </div>
+        `;
+      });
+    })
+    .catch(err => {
+      document.getElementById("matches").innerHTML = "حدث خطأ أثناء جلب البيانات.";
+    });
+  </script>
+</body>
+</html>

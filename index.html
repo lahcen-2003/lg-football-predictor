@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Prediction Engine VIP</title>
+  <title>AI Football Predictor VIP</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
@@ -54,6 +54,7 @@
       background: #1f2937; color: #fff; font-size: 16px; outline: none; text-align: center; margin-bottom: 15px; font-weight: bold;
     }
 
+    /* Cards */
     .match-card {
       background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 16px;
       margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); border-right: 4px solid #f59e0b;
@@ -95,7 +96,7 @@
   <!-- لوحة التحكم -->
   <div id="dashboard">
     <div class="top-bar">
-      <span style="font-size: 12px; color: #10b981; font-weight: bold;">🟢 الجلسة محفوظة تلقائياً</span>
+      <span style="font-size: 11px; color: #10b981; font-weight: bold;">🟢 الجلسة محفوظة تلقائياً</span>
       <button class="btn-logout" onclick="logout()">تسجيل الخروج 🚪</button>
     </div>
 
@@ -107,7 +108,7 @@
     <div class="search-card">
       <label class="date-label">📅 حدد التاريخ لتحليل أحدث المباريات:</label>
       <input type="date" id="match-date" class="date-input">
-      <button class="btn-gold" onclick="generateAIAnalytics()">🤖 تحليل المباريات بالذكاء الاصطناعي</button>
+      <button class="btn-gold" onclick="runPredictions()">🤖 تحليل المباريات بالذكاء الاصطناعي</button>
     </div>
 
     <div id="matches-container"></div>
@@ -116,114 +117,94 @@
 </div>
 
 <script>
-  // الفحص التلقائي عند فتح الصفحة: هل المستخدم مسجل الدخول سابقاً؟
-  window.onload = function() {
-    const isLogged = localStorage.getItem("lahcen_vip_logged");
-    if (isLogged === "true") {
-      showDashboard();
+  // فحص تسجيل الدخول السريع
+  document.addEventListener("DOMContentLoaded", function() {
+    if (localStorage.getItem("lahcen_logged") === "true") {
+      showMain();
     }
-  };
+  });
 
   function login() {
-    const user = document.getElementById("user-input").value.trim();
-    const pass = document.getElementById("pass-input").value.trim();
-    
-    if (user.toLowerCase() === "lahcen" && pass.toLowerCase() === "lahcen") {
-      // حفظ تسجيل الدخول فـ الـ Browser Memory
-      localStorage.setItem("lahcen_vip_logged", "true");
-      showDashboard();
+    var u = document.getElementById("user-input").value.trim().toLowerCase();
+    var p = document.getElementById("pass-input").value.trim().toLowerCase();
+    if (u === "lahcen" && p === "lahcen") {
+      localStorage.setItem("lahcen_logged", "true");
+      showMain();
     } else {
       document.getElementById("login-error").style.display = "block";
     }
   }
 
   function logout() {
-    localStorage.removeItem("lahcen_vip_logged");
+    localStorage.removeItem("lahcen_logged");
     document.getElementById("dashboard").style.display = "none";
     document.getElementById("login-box").style.display = "block";
   }
 
-  function showDashboard() {
+  function showMain() {
     document.getElementById("login-box").style.display = "none";
     document.getElementById("dashboard").style.display = "block";
-    document.getElementById("match-date").valueAsDate = new Date();
-    generateAIAnalytics();
-  }
-
-  function getHash(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      hash = (hash << 5) - hash + str.charCodeAt(i);
-      hash |= 0;
-    }
-    return Math.abs(hash);
-  }
-
-  function generateAIAnalytics() {
-    const dateInput = document.getElementById("match-date").value;
-    const container = document.getElementById("matches-container");
     
-    if (!dateInput) return;
-    container.innerHTML = "<p style='text-align:center; color:#f59e0b; padding: 15px;'>🤖 جاري معالجة البيانات وتحليل المباريات...</p>";
+    // تاريخ اليوم تلقائي
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById("match-date").value = today;
+    
+    runPredictions();
+  }
 
-    setTimeout(() => {
-      const db = [
-        { home: "Arsenal", away: "Liverpool", league: "الدوري الإنجليزي", time: "17:30" },
-        { home: "Real Madrid", away: "Barcelona", league: "الدوري الإسباني", time: "20:00" },
-        { home: "Bayern Munich", away: "Dortmund", league: "الدوري الألماني", time: "18:30" },
-        { home: "Inter Milan", away: "Juventus", league: "الدوري الإيطالي", time: "19:45" },
-        { home: "PSG", away: "Marseille", league: "الدوري الفرنسي", time: "20:00" },
-        { home: "Manchester City", away: "Chelsea", league: "الدوري الإنجليزي", time: "16:00" }
-      ];
+  function runPredictions() {
+    var d = document.getElementById("match-date").value;
+    var container = document.getElementById("matches-container");
+    if (!d) return;
 
-      container.innerHTML = "";
-      const dateHash = getHash(dateInput);
+    var matches = [
+      { home: "Arsenal", away: "Liverpool", league: "الدوري الإنجليزي", time: "17:30" },
+      { home: "Real Madrid", away: "Barcelona", league: "الدوري الإسباني", time: "20:00" },
+      { home: "Bayern Munich", away: "Dortmund", league: "الدوري الألماني", time: "18:30" },
+      { home: "Inter Milan", away: "Juventus", league: "الدوري الإيطالي", time: "19:45" },
+      { home: "PSG", away: "Marseille", league: "الدوري الفرنسي", time: "20:00" },
+      { home: "Manchester City", away: "Chelsea", league: "الدوري الإنجليزي", time: "16:00" }
+    ];
 
-      db.forEach((item, index) => {
-        const seed = (dateHash + getHash(item.home) * 3 + getHash(item.away) * 7 + index * 11) % 100;
-        
-        let winPred = seed < 45 ? `1 (فوز ${item.home})` : (seed < 68 ? "X (تعادل متوقع)" : `2 (فوز ${item.away})`);
-        let winProb = 65 + (seed % 27);
+    var html = "";
+    var numDate = parseInt(d.replace(/-/g, "")) || 1;
 
-        let bttsPred = (seed % 2 === 0) ? "نعم (كلا الفريقين سيسجل)" : "لا (لن يسجل الفريقان معاً)";
-        let bttsProb = 60 + ((seed * 3) % 32);
+    for (var i = 0; i < matches.length; i++) {
+      var m = matches[i];
+      var seed = (numDate + (i * 17) + m.home.length * 5) % 100;
 
-        container.innerHTML += `
-          <div class="match-card">
-            <div class="match-header">
-              <span>🏆 ${item.league}</span>
-              <span class="match-time">⏰ ${item.time}</span>
-            </div>
+      var winPred = seed < 40 ? "1 (فوز " + m.home + ")" : (seed < 65 ? "X (تعادل متوقع)" : "2 (فوز " + m.away + ")");
+      var winProb = 65 + (seed % 28);
 
-            <div class="teams-container">
-              <div class="team">
-                ${item.away}
-                <span class="team-role">الضيف (Away)</span>
-              </div>
-              <div class="vs">VS</div>
-              <div class="team">
-                ${item.home}
-                <span class="team-role">المضيف (Home)</span>
-              </div>
-            </div>
+      var bttsPred = (seed % 2 === 0) ? "نعم (كلا الفريقين سيسجل)" : "لا (لن يسجل الفريقان معاً)";
+      var bttsProb = 62 + ((seed * 2) % 30);
 
-            <div class="pred-grid">
-              <div class="pred-box">
-                <span class="pred-title">🎯 التوقع الرئيسي (1X2)</span>
-                <span class="pred-val">${winPred}</span>
-                <span class="pred-prob">دقة التحليل: ${winProb}%</span>
-              </div>
-              
-              <div class="pred-box">
-                <span class="pred-title">⚽ هل سيسجل الفريقان؟</span>
-                <span class="pred-val" style="color: #10b981;">${bttsPred}</span>
-                <span class="pred-prob">دقة التحليل: ${bttsProb}%</span>
-              </div>
-            </div>
-          </div>
-        `;
-      });
-    }, 300);
+      html += '<div class="match-card">' +
+        '<div class="match-header">' +
+          '<span>🏆 ' + m.league + '</span>' +
+          '<span class="match-time">⏰ ' + m.time + '</span>' +
+        '</div>' +
+        '<div class="teams-container">' +
+          '<div class="team">' + m.away + '<span class="team-role">الضيف (Away)</span></div>' +
+          '<div class="vs">VS</div>' +
+          '<div class="team">' + m.home + '<span class="team-role">المضيف (Home)</span></div>' +
+        '</div>' +
+        '<div class="pred-grid">' +
+          '<div class="pred-box">' +
+            '<span class="pred-title">🎯 التوقع الرئيسي (1X2)</span>' +
+            '<span class="pred-val">' + winPred + '</span>' +
+            '<span class="pred-prob">دقة التحليل: ' + winProb + '%</span>' +
+          '</div>' +
+          '<div class="pred-box">' +
+            '<span class="pred-title">⚽ هل سيسجل الفريقان؟</span>' +
+            '<span class="pred-val" style="color: #10b981;">' + bttsPred + '</span>' +
+            '<span class="pred-prob">دقة التحليل: ' + bttsProb + '%</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    container.innerHTML = html;
   }
 </script>
 

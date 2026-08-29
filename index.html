@@ -22,13 +22,13 @@
     #login-box p { color: #9ca3af; font-size: 13px; margin-bottom: 20px; }
     #login-box input {
       width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #374151;
-      background: #1f2937; color: #fff; text-align: center; font-size: 18px; outline: none; margin-bottom: 15px;
+      background: #1f2937; color: #fff; text-align: center; font-size: 16px; outline: none; margin-bottom: 12px;
     }
     .btn-gold {
       width: 100%; padding: 14px; border-radius: 10px; border: none;
       background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%);
       color: #000; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.3s;
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); margin-top: 5px;
     }
     .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5); }
 
@@ -89,10 +89,11 @@
   <!-- شاشة الدخول الفخمة -->
   <div id="login-box">
     <h2>👑 LAHCEN VIP ANALYTICS</h2>
-    <p>منصة التحليل الرياضي الذكي والخاص</p>
-    <input type="password" id="pass-input" placeholder="••••••••">
+    <p>أدخل بيانات المستكشف المصرح له</p>
+    <input type="text" id="user-input" placeholder="اسم المستكشف">
+    <input type="password" id="pass-input" placeholder="كلمة المرور">
     <button class="btn-gold" onclick="login()">دخول المنصة</button>
-    <div id="login-error" class="error-msg">كلمة المرور غير صحيحة!</div>
+    <div id="login-error" class="error-msg">اسم المستكشف أو كلمة المرور غير صحيحة!</div>
   </div>
 
   <!-- لوحة التحكم -->
@@ -168,8 +169,10 @@
   let selectedAway = null;
 
   function login() {
-    const input = document.getElementById("pass-input").value.trim();
-    if (input.toLowerCase() === "lahcen") {
+    const user = document.getElementById("user-input").value.trim();
+    const pass = document.getElementById("pass-input").value.trim();
+    
+    if (user.toLowerCase() === "lahcen" && pass.toLowerCase() === "lahcen") {
       document.getElementById("login-box").style.display = "none";
       document.getElementById("dashboard").style.display = "block";
     } else {
@@ -224,18 +227,14 @@
     document.getElementById("display-away").innerText = selectedAway.name;
     document.getElementById("display-home").innerText = selectedHome.name;
 
-    // خوارزمية الحساب الفائقة للتوقعات
     const seed = (selectedHome.id * 3 + selectedAway.id * 7) % 100;
 
-    // 1X2
     let win1x2 = seed < 45 ? `فوز ${selectedHome.name} (1)` : (seed < 68 ? "تعادل (X)" : `فوز ${selectedAway.name} (2)`);
     let p1x2 = 65 + (seed % 25);
 
-    // Over / Under 2.5 & 3.5
     let ouText = seed > 60 ? "Plus 3.5" : (seed > 30 ? "Plus 2.5" : "Moins 2.5");
     let pOU = 62 + ((seed * 3) % 28);
 
-    // GG / NG
     let bttsText = (seed % 2 === 0) ? "Goal (GG)" : "No Goal (NG)";
     let pBTTS = 58 + ((seed * 2) % 32);
 

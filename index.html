@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LAHCEN VIP - REAL API INTEGRATION</title>
+  <title>LAHCEN VIP - MULTI-LANGUAGE REAL ANALYTICS</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
@@ -41,7 +41,7 @@
 <div class="container">
   <div id="login-box">
     <h2>👑 LAHCEN VIP ENGINE</h2>
-    <p>بوابة التحليل المباشر (Real API Data)</p>
+    <p>بوابة التحليل المباشر (دعم جميع اللغات)</p>
     <input type="text" id="user-input" class="input-field" placeholder="اسم المستكشف (lahcen)">
     <input type="password" id="pass-input" class="input-field" placeholder="كلمة المرور (lahcen)">
     <button class="btn-gold" onclick="login()">الدخول إلى المنصة 🚀</button>
@@ -58,29 +58,49 @@
       <p id="api-status">⚠️ جاري التحقق من مفتاح API...</p>
     </div>
 
-    <!-- إعدادات API -->
     <div class="api-settings">
       <label class="date-label" style="color: #ef4444;">🔑 مفتاح API-Football الخاص بك:</label>
       <input type="text" id="api-key" class="input-field" placeholder="ضع مفتاح API هنا..." onchange="saveApiKey()">
-      <p style="font-size: 10px; color: #9ca3af; text-align: center;">احصل عليه مجاناً من dashboard.api-football.com</p>
     </div>
 
     <div class="card-box">
-      <label class="date-label">🏠 الفريق المضيف (أو جزء من اسمه بالإنجليزية):</label>
-      <input type="text" id="home-team" class="input-field" placeholder="مثال: Real Madrid">
+      <label class="date-label">🏠 الفريق المضيف (بالعربية أو الفرنسية أو الإنجليزية):</label>
+      <input type="text" id="home-team" class="input-field" placeholder="مثال: توتنهام / Tottenham / Real Madrid">
       
       <label class="date-label">✈️ الفريق الضيف:</label>
-      <input type="text" id="away-team" class="input-field" placeholder="مثال: Barcelona">
+      <input type="text" id="away-team" class="input-field" placeholder="مثال: نيوكاسل / Newcastle / Barcelona">
       
       <button class="btn-gold" onclick="analyzeMatch()">🤖 جلب الإحصائيات الحقيقية وتحليلها</button>
     </div>
 
-    <div id="loading">🔍 جاري الاتصال بخوادم API-Football لجلب النتائج المباشرة...</div>
+    <div id="loading">🔍 جاري التعرف على أسماء الفرق وجلب البيانات المباشرة...</div>
     <div id="result-box"></div>
   </div>
 </div>
 
 <script>
+  // قاموس الترجمة الذكي للفرق الشائعة
+  const teamDictionary = {
+    "توتنهام": "Tottenham", "توتنهام هوتسبير": "Tottenham",
+    "نيوكاسل": "Newcastle", "نيوكاسل يونايتد": "Newcastle",
+    "ريال مدريد": "Real Madrid", "برشلونة": "Barcelona", "بارسلونة": "Barcelona",
+    "ليفربول": "Liverpool", "مانشستر سيتي": "Manchester City", "مان سيتي": "Manchester City",
+    "مانشستر يونايتد": "Manchester United", "مان يونايتد": "Manchester United",
+    "أرسنال": "Arsenal", "ارسنال": "Arsenal", "تشيلسي": "Chelsea",
+    "بايرن ميونخ": "Bayern Munich", "باريس سان جيرمان": "Paris Saint Germain", "بي اس جي": "Paris Saint Germain",
+    "انتر ميلان": "Inter", "إنتر ميلان": "Inter", "ميلان": "AC Milan", "اي سي ميلان": "AC Milan",
+    "يوفنتوس": "Juventus", "اتلتيكو مدريد": "Atletico Madrid", "أتدلتيكو مدريد": "Atletico Madrid",
+    "الوداد": "Wydad AC", "الرجاء": "Raja Club Athletic", "الجيش الملكي": "FAR Rabat"
+  };
+
+  function normalizeTeamName(name) {
+    let cleanName = name.trim();
+    if (teamDictionary[cleanName]) {
+      return teamDictionary[cleanName];
+    }
+    return cleanName;
+  }
+
   document.addEventListener("DOMContentLoaded", function() {
     if (localStorage.getItem("lahcen_logged") === "true") {
       showMain();
@@ -122,14 +142,31 @@
     document.getElementById("api-status").style.color = "#10b981";
   }
 
+  async function fetchTeamWithFallback(teamInput, headers) {
+    let searchName = normalizeTeamName(teamInput);
+    
+    // محاولة البحث الأولى
+    let res = await fetch(`https://v3.football.api-sports.io/teams?search=${encodeURIComponent(searchName)}`, { headers });
+    let data = await res.json();
+
+    // إذا لم يجد نتيجة وكانت الكلمة مكتوبة بالإنجليزية ولكن أخطأ فيها المستخدم، نجرّب البحث بأول كلمة فقط
+    if ((!data.response || data.response.length === 0) && searchName.includes(" ")) {
+      let firstWord = searchName.split(" ")[0];
+      res = await fetch(`https://v3.football.api-sports.io/teams?search=${encodeURIComponent(firstWord)}`, { headers });
+      data = await res.json();
+    }
+
+    return data;
+  }
+
   async function analyzeMatch() {
-    const home = document.getElementById("home-team").value.trim();
-    const away = document.getElementById("away-team").value.trim();
+    const homeInput = document.getElementById("home-team").value.trim();
+    const awayInput = document.getElementById("away-team").value.trim();
     const apiKey = document.getElementById("api-key").value.trim();
     const resultBox = document.getElementById("result-box");
     const loading = document.getElementById("loading");
 
-    if (!home || !away) { alert("أدخل أسماء الفرق!"); return; }
+    if (!homeInput || !awayInput) { alert("أدخل أسماء الفرق!"); return; }
     if (!apiKey) { alert("ضروري تدخل مفتاح API باش يجيب بيانات حقيقية!"); return; }
 
     resultBox.innerHTML = "";
@@ -141,17 +178,15 @@
     };
 
     try {
-      // 1. البحث عن ID الفريق المضيف
-      const resHome = await fetch(`https://v3.football.api-sports.io/teams?search=${encodeURIComponent(home)}`, { headers });
-      const dataHome = await resHome.json();
-      if (!dataHome.response || dataHome.response.length === 0) throw new Error(`لم يتم العثور على فريق: ${home}`);
+      // 1. البحث عن الفريق المضيف
+      const dataHome = await fetchTeamWithFallback(homeInput, headers);
+      if (!dataHome.response || dataHome.response.length === 0) throw new Error(`لم يتم العثور على فريق: ${homeInput}`);
       const homeId = dataHome.response[0].team.id;
       const homeName = dataHome.response[0].team.name;
 
-      // 2. البحث عن ID الفريق الضيف
-      const resAway = await fetch(`https://v3.football.api-sports.io/teams?search=${encodeURIComponent(away)}`, { headers });
-      const dataAway = await resAway.json();
-      if (!dataAway.response || dataAway.response.length === 0) throw new Error(`لم يتم العثور على فريق: ${away}`);
+      // 2. البحث عن الفريق الضيف
+      const dataAway = await fetchTeamWithFallback(awayInput, headers);
+      if (!dataAway.response || dataAway.response.length === 0) throw new Error(`لم يتم العثور على فريق: ${awayInput}`);
       const awayId = dataAway.response[0].team.id;
       const awayName = dataAway.response[0].team.name;
 
@@ -160,15 +195,14 @@
       const dataH2H = await resH2H.json();
       
       let matches = dataH2H.response;
-      
       loading.style.display = "none";
 
       if (!matches || matches.length === 0) {
-        resultBox.innerHTML = `<p style="text-align:center; color:#ef4444;">❌ لا توجد مواجهات سابقة مسجلة بين ${homeName} و ${awayName}.</p>`;
+        resultBox.innerHTML = `<p style="text-align:center; color:#ef4444; padding: 15px;">❌ لا توجد مواجهات سابقة مسجلة بين ${homeName} و ${awayName}.</p>`;
         return;
       }
 
-      // 4. تحليل البيانات الحقيقية المستخرجة
+      // 4. تحليل النتائج
       let homeWins = 0, awayWins = 0, draws = 0;
       let over25 = 0, btts = 0;
       let totalMatches = matches.length;
@@ -176,10 +210,8 @@
       matches.forEach(m => {
         let hGoals = m.goals.home;
         let aGoals = m.goals.away;
-        
-        if (hGoals === null || aGoals === null) return; // مباراة لم تلعب بعد
+        if (hGoals === null || aGoals === null) return;
 
-        // 1X2
         if (m.teams.home.id === homeId) {
           if (hGoals > aGoals) homeWins++;
           else if (hGoals < aGoals) awayWins++;
@@ -190,12 +222,10 @@
           else draws++;
         }
 
-        // الأهداف
         if ((hGoals + aGoals) > 2.5) over25++;
         if (hGoals > 0 && aGoals > 0) btts++;
       });
 
-      // تحويل الإحصائيات الحقيقية إلى نسب مئوية
       let p1 = Math.round((homeWins / totalMatches) * 100);
       let p2 = Math.round((awayWins / totalMatches) * 100);
       let pX = Math.round((draws / totalMatches) * 100);
@@ -206,12 +236,9 @@
       let pGoal = Math.round((btts / totalMatches) * 100);
       let pNoGoal = 100 - pGoal;
 
-      // تجنب نسب 0% (إعطاء هامش احتمالية صغير)
-      if (p1 === 0) { p1 = 15; p2 -= 10; pX -= 5; }
-      if (p2 === 0) { p2 = 15; p1 -= 10; pX -= 5; }
-      if (pX === 0) { pX = 20; p1 -= 10; p2 -= 10; }
+      if (p1 === 0) { p1 = 10; p2 -= 5; pX -= 5; }
+      if (p2 === 0) { p2 = 10; p1 -= 5; pX -= 5; }
 
-      // توليد البطاقة بناءً على الداتا الحقيقية
       resultBox.innerHTML = `
         <div class="match-card">
           <div class="teams-header">${homeName} <span>VS</span> ${awayName}</div>
@@ -240,7 +267,7 @@
 
     } catch (error) {
       loading.style.display = "none";
-      resultBox.innerHTML = `<p style="text-align:center; color:#ef4444; padding:15px;">❌ خطأ: ${error.message} <br> تأكد من اسم الفريق باللغة الإنجليزية أو صحة مفتاح API.</p>`;
+      resultBox.innerHTML = `<p style="text-align:center; color:#ef4444; padding:15px;">❌ خطأ: ${error.message}</p>`;
     }
   }
 </script>

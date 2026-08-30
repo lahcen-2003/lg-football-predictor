@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LAHCEN ALL MATCHES & DATES</title>
+  <title>LAHCEN LEAGUES & MATCHES VIP</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
@@ -20,16 +20,23 @@
     .card-box { background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin-bottom: 20px; }
     .date-label { font-size: 13px; color: #f59e0b; font-weight: 700; display: block; margin-bottom: 6px; text-align: right; }
     .btn-gold { width: 100%; padding: 14px; border-radius: 10px; border: none; background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%); color: #000; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); margin-top: 5px; }
-    .match-card { background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 16px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); border-right: 4px solid #f59e0b; }
-    .league-title { font-size: 12px; color: #f59e0b; text-align: center; margin-bottom: 8px; font-weight: bold; background: #1f2937; padding: 6px; border-radius: 6px; }
-    .teams-header { text-align: center; font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #1f2937; }
+    
+    /* تصميم تقسيم البطولات */
+    .league-accordion { background: #1f2937; border: 1px solid #374151; border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+    .league-header-btn { width: 100%; background: #111827; color: #f59e0b; padding: 14px; text-align: right; border: none; font-size: 15px; font-weight: 800; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .league-header-btn:hover { background: #1a2436; }
+    .league-count { background: #d97706; color: #000; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+    .league-content { display: none; padding: 12px; background: #0b0f19; }
+
+    .match-card { background: #111827; border: 1px solid #1f2937; border-radius: 14px; padding: 14px; margin-bottom: 15px; box-shadow: 0 6px 15px rgba(0,0,0,0.3); border-right: 4px solid #f59e0b; }
+    .teams-header { text-align: center; font-size: 15px; font-weight: 900; color: #fff; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #1f2937; }
     .teams-header span { color: #f59e0b; }
-    .section-title { font-size: 12px; color: #38bdf8; font-weight: 800; margin: 10px 0 4px 0; text-align: right; border-right: 3px solid #38bdf8; padding-right: 8px; }
-    .prob-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-    .prob-table td { padding: 6px 8px; font-size: 12px; border-bottom: 1px solid #1f2937; }
+    .section-title { font-size: 11px; color: #38bdf8; font-weight: 800; margin: 8px 0 4px 0; text-align: right; border-right: 3px solid #38bdf8; padding-right: 6px; }
+    .prob-table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
+    .prob-table td { padding: 5px 6px; font-size: 11px; border-bottom: 1px solid #1f2937; }
     .prob-name { color: #d1d5db; font-weight: 700; text-align: right; }
     .prob-val { color: #10b981; font-weight: 900; text-align: left; }
-    .prob-val.highlight { color: #f59e0b; font-size: 13px; }
+    .prob-val.highlight { color: #f59e0b; font-size: 12px; }
     #loading { display: none; text-align: center; color: #f59e0b; padding: 15px; font-weight: bold; font-size: 13px; }
     .api-settings { background: #1e1e1e; padding: 12px; border-radius: 10px; margin-bottom: 15px; border: 1px dashed #ef4444; }
   </style>
@@ -39,7 +46,7 @@
 <div class="container">
   <div id="login-box">
     <h2>👑 LAHCEN VIP ENGINE</h2>
-    <p>تحليل كامل لجميع المباريات والدوريات بالتواريخ</p>
+    <p>تصنيف المباريات حسب البطولات والدوريات</p>
     <input type="text" id="user-input" class="input-field" placeholder="اسم المستكشف (lahcen)">
     <input type="password" id="pass-input" class="input-field" placeholder="كلمة المرور (lahcen)">
     <button class="btn-gold" onclick="login()">الدخول إلى المنصة 🚀</button>
@@ -52,8 +59,8 @@
     </div>
 
     <div class="header">
-      <h1>🧠 LAHCEN MATCHES ANALYTICS</h1>
-      <p id="api-status" style="color:#10b981; font-size:12px; font-weight:bold;">✅ جاهز لجلب المباريات بالتواريخ</p>
+      <h1>🧠 LAHCEN LEAGUE ANALYTICS</h1>
+      <p id="api-status" style="color:#10b981; font-size:12px; font-weight:bold;">✅ اختر الدوري الذي تريد تصفحه</p>
     </div>
 
     <div class="api-settings">
@@ -62,13 +69,12 @@
     </div>
 
     <div class="card-box">
-      <label class="date-label">📅 اختر التاريخ لي بغيتي تخرج المباريات ديالو:</label>
+      <label class="date-label">📅 اختر التاريخ:</label>
       <input type="date" id="selected-date" class="input-field" style="color-scheme: dark;">
-      
-      <button class="btn-gold" onclick="loadMatchesByDate()">🔍 عرض مباريات اليوم المختار وتوقعاتها</button>
+      <button class="btn-gold" onclick="loadMatchesByDate()">🔍 جلب وتقسيم المباريات حسب الدوري</button>
     </div>
 
-    <div id="loading">🔍 جاري جلب كافة مباريات البطولة والدوريات لهذا اليوم...</div>
+    <div id="loading">🔍 جاري تجميع وتصنيف المباريات حسب الدوري...</div>
     <div id="result-box"></div>
   </div>
 </div>
@@ -79,7 +85,6 @@
     const savedKey = localStorage.getItem("football_api_key");
     if(savedKey) document.getElementById("api-key").value = savedKey;
 
-    // تعيين تاريخ اليوم افتراضياً
     const today = new Date().toISOString().split('T')[0];
     document.getElementById("selected-date").value = today;
   });
@@ -109,6 +114,15 @@
     localStorage.setItem("football_api_key", key);
   }
 
+  function toggleLeague(id) {
+    const el = document.getElementById("league-content-" + id);
+    if(el.style.display === "block") {
+      el.style.display = "none";
+    } else {
+      el.style.display = "block";
+    }
+  }
+
   async function loadMatchesByDate() {
     const apiKey = document.getElementById("api-key").value.trim();
     const selectedDate = document.getElementById("selected-date").value;
@@ -124,101 +138,114 @@
     const headers = { "x-apisports-key": apiKey, "Content-Type": "application/json" };
 
     try {
-      // جلب جميع المباريات المتاحة للتاريخ المحدد مباشرة
       const res = await fetch(`https://v3.football.api-sports.io/fixtures?date=${selectedDate}`, { headers });
       const data = await res.json();
       loading.style.display = "none";
 
       if (!data.response || data.response.length === 0) {
-        resultBox.innerHTML = `
-          <div style="text-align:center; padding: 20px; background:#111827; border-radius:12px;">
-            <p style="color:#ef4444; font-weight:bold;">❌ لا توجد مباريات فـ هذا التاريخ (${selectedDate}) فـ API.</p>
-          </div>`;
+        resultBox.innerHTML = `<div style="text-align:center; padding: 20px; background:#111827; border-radius:12px;"><p style="color:#ef4444; font-weight:bold;">❌ لا توجد مباريات فـ هذا التاريخ (${selectedDate})</p></div>`;
         return;
       }
 
-      // عرض المباريات كاملة
-      let matches = data.response;
-      let html = `<p style="text-align:center; color:#10b981; font-size:13px; font-weight:bold; margin-bottom:15px;">📊 تم العثور على ${matches.length} مباراة بتاريخ ${selectedDate}</p>`;
+      // تجميع المباريات حسب اسم الدوري
+      const groupedLeagues = {};
+      data.response.forEach(item => {
+        let leagueName = item.league.country + " - " + item.league.name;
+        if (!groupedLeagues[leagueName]) {
+          groupedLeagues[leagueName] = [];
+        }
+        groupedLeagues[leagueName].push(item);
+      });
 
-      matches.forEach(item => {
-        let homeName = item.teams.home.name;
-        let awayName = item.teams.away.name;
-        let leagueName = item.league.name + " (" + item.league.country + ")";
-        let id = item.fixture.id;
+      let html = `<p style="text-align:center; color:#10b981; font-size:13px; font-weight:bold; margin-bottom:15px;">🏆 تم تصنيف ${Object.keys(groupedLeagues).length} بطولات/دوريات لهذا اليوم</p>`;
 
-        // حساب خوارزمية التوقعات بالنسبة المئوية المقابلة للماتش
-        let seed = (id + homeName.length * 7 + awayName.length * 11) % 100;
-
-        let p1 = 35 + (seed % 30);
-        let p2 = 25 + ((seed * 3) % 25);
-        let pX = 100 - (p1 + p2);
-
-        let pPlus25 = 45 + (seed % 35);
-        let pMoins25 = 100 - pPlus25;
-
-        let pGoal = 40 + ((seed * 2) % 40);
-        let pNoGoal = 100 - pGoal;
-
-        let pMF11 = Math.round(p1 * 0.65);
-        let pMFX1 = Math.round(p1 * 0.35);
-        let pMFXX = Math.round(pX * 0.70);
-        let pMF22 = Math.round(p2 * 0.65);
-
-        let s21 = 18 + (seed % 10);
-        let s10 = 15 + (seed % 8);
-        let s11 = 14 + (seed % 6);
-        let s01 = 12 + (seed % 5);
-        let sOther = 100 - (s21 + s10 + s11 + s01);
+      let leagueIdx = 0;
+      for (let leagueName in groupedLeagues) {
+        leagueIdx++;
+        let matches = groupedLeagues[leagueName];
 
         html += `
-          <div class="match-card">
-            <div class="league-title">🏆 ${leagueName}</div>
-            <div class="teams-header">${homeName} <span>VS</span> ${awayName}</div>
-
-            <!-- 1X2 Final -->
-            <div class="section-title">🎯 النتيجة النهائية (1X2 / Final)</div>
-            <table class="prob-table">
-              <tr><td class="prob-name">فوز المضيف (1)</td><td class="prob-val ${p1 > 45 ? 'highlight' : ''}">${p1}%</td></tr>
-              <tr><td class="prob-name">التعادل (X)</td><td class="prob-val">${pX}%</td></tr>
-              <tr><td class="prob-name">فوز الضيف (2)</td><td class="prob-val ${p2 > 45 ? 'highlight' : ''}">${p2}%</td></tr>
-            </table>
-
-            <!-- Goals Over / Under 2.5 -->
-            <div class="section-title">⚽ مجموع الأهداف (2.5)</div>
-            <table class="prob-table">
-              <tr><td class="prob-name">Plus 2.5 (أكثر من 2.5)</td><td class="prob-val ${pPlus25 >= 50 ? 'highlight' : ''}">${pPlus25}%</td></tr>
-              <tr><td class="prob-name">Moins 2.5 (أقل من 2.5)</td><td class="prob-val ${pMoins25 >= 50 ? 'highlight' : ''}">${pMoins25}%</td></tr>
-            </table>
-
-            <!-- BTTS Goal / No Goal -->
-            <div class="section-title">🥅 التسجيل للفريقين (BTTS)</div>
-            <table class="prob-table">
-              <tr><td class="prob-name">Gool (كلا الفريقين سيسجل)</td><td class="prob-val ${pGoal >= 50 ? 'highlight' : ''}">${pGoal}%</td></tr>
-              <tr><td class="prob-name">No Gool (أحدهما لن يسجل)</td><td class="prob-val ${pNoGoal >= 50 ? 'highlight' : ''}">${pNoGoal}%</td></tr>
-            </table>
-
-            <!-- M/F -->
-            <div class="section-title">⏱️ الشوط الأول / نهاية المباراة (M/F)</div>
-            <table class="prob-table">
-              <tr><td class="prob-name">1 / 1 (مضيف / مضيف)</td><td class="prob-val">${pMF11}%</td></tr>
-              <tr><td class="prob-name">X / 1 (تعادل / مضيف)</td><td class="prob-val">${pMFX1}%</td></tr>
-              <tr><td class="prob-name">X / X (تعادل / تعادل)</td><td class="prob-val">${pMFXX}%</td></tr>
-              <tr><td class="prob-name">2 / 2 (ضيف / ضيف)</td><td class="prob-val">${pMF22}%</td></tr>
-            </table>
-
-            <!-- Score Exacte -->
-            <div class="section-title">📌 النتيجة الدقيقة المتوقعة (Score Exacte)</div>
-            <table class="prob-table">
-              <tr><td class="prob-name">2 - 1</td><td class="prob-val highlight">${s21}%</td></tr>
-              <tr><td class="prob-name">1 - 0</td><td class="prob-val">${s10}%</td></tr>
-              <tr><td class="prob-name">1 - 1</td><td class="prob-val">${s11}%</td></tr>
-              <tr><td class="prob-name">0 - 1</td><td class="prob-val">${s01}%</td></tr>
-              <tr><td class="prob-name">نتائج أخرى</td><td class="prob-val">${sOther}%</td></tr>
-            </table>
-          </div>
+          <div class="league-accordion">
+            <button class="league-header-btn" onclick="toggleLeague(${leagueIdx})">
+              <span>🏆 ${leagueName}</span>
+              <span class="league-count">${matches.length} مباريات 🔽</span>
+            </button>
+            <div id="league-content-${leagueIdx}" class="league-content">
         `;
-      });
+
+        matches.forEach(item => {
+          let homeName = item.teams.home.name;
+          let awayName = item.teams.away.name;
+          let id = item.fixture.id;
+
+          let seed = (id + homeName.length * 7 + awayName.length * 11) % 100;
+
+          let p1 = 35 + (seed % 30);
+          let p2 = 25 + ((seed * 3) % 25);
+          let pX = 100 - (p1 + p2);
+
+          let pPlus25 = 45 + (seed % 35);
+          let pMoins25 = 100 - pPlus25;
+
+          let pGoal = 40 + ((seed * 2) % 40);
+          let pNoGoal = 100 - pGoal;
+
+          let pMF11 = Math.round(p1 * 0.65);
+          let pMFX1 = Math.round(p1 * 0.35);
+          let pMFXX = Math.round(pX * 0.70);
+          let pMF22 = Math.round(p2 * 0.65);
+
+          let s21 = 18 + (seed % 10);
+          let s10 = 15 + (seed % 8);
+          let s11 = 14 + (seed % 6);
+          let s01 = 12 + (seed % 5);
+          let sOther = 100 - (s21 + s10 + s11 + s01);
+
+          html += `
+            <div class="match-card">
+              <div class="teams-header">${homeName} <span>VS</span> ${awayName}</div>
+
+              <div class="section-title">🎯 النتيجة النهائية (1X2)</div>
+              <table class="prob-table">
+                <tr><td class="prob-name">فوز المضيف (1)</td><td class="prob-val ${p1 > 45 ? 'highlight' : ''}">${p1}%</td></tr>
+                <tr><td class="prob-name">التعادل (X)</td><td class="prob-val">${pX}%</td></tr>
+                <tr><td class="prob-name">فوز الضيف (2)</td><td class="prob-val ${p2 > 45 ? 'highlight' : ''}">${p2}%</td></tr>
+              </table>
+
+              <div class="section-title">⚽ الأهداف (2.5)</div>
+              <table class="prob-table">
+                <tr><td class="prob-name">Plus 2.5</td><td class="prob-val ${pPlus25 >= 50 ? 'highlight' : ''}">${pPlus25}%</td></tr>
+                <tr><td class="prob-name">Moins 2.5</td><td class="prob-val ${pMoins25 >= 50 ? 'highlight' : ''}">${pMoins25}%</td></tr>
+              </table>
+
+              <div class="section-title">🥅 BTTS (التسجيل للفريقين)</div>
+              <table class="prob-table">
+                <tr><td class="prob-name">Gool</td><td class="prob-val ${pGoal >= 50 ? 'highlight' : ''}">${pGoal}%</td></tr>
+                <tr><td class="prob-name">No Gool</td><td class="prob-val ${pNoGoal >= 50 ? 'highlight' : ''}">${pNoGoal}%</td></tr>
+              </table>
+
+              <div class="section-title">⏱️ الشوط الأول / النهائي (M/F)</div>
+              <table class="prob-table">
+                <tr><td class="prob-name">1 / 1</td><td class="prob-val">${pMF11}%</td></tr>
+                <tr><td class="prob-name">X / 1</td><td class="prob-val">${pMFX1}%</td></tr>
+                <tr><td class="prob-name">X / X</td><td class="prob-val">${pMFXX}%</td></tr>
+                <tr><td class="prob-name">2 / 2</td><td class="prob-val">${pMF22}%</td></tr>
+              </table>
+
+              <div class="section-title">📌 النتيجة الدقيقة (Score Exacte)</div>
+              <table class="prob-table">
+                <tr><td class="prob-name">2 - 1</td><td class="prob-val highlight">${s21}%</td></tr>
+                <tr><td class="prob-name">1 - 0</td><td class="prob-val">${s10}%</td></tr>
+                <tr><td class="prob-name">1 - 1</td><td class="prob-val">${s11}%</td></tr>
+                <tr><td class="prob-name">0 - 1</td><td class="prob-val">${s01}%</td></tr>
+                <tr><td class="prob-name">نتائج أخرى</td><td class="prob-val">${sOther}%</td></tr>
+              </table>
+            </div>
+          `;
+        });
+
+        html += `</div></div>`;
+      }
 
       resultBox.innerHTML = html;
 

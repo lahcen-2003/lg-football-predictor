@@ -796,27 +796,20 @@ button{
    API-FOOTBALL V3
 ===================================================== */
 
-const API_BASE =
- "https://v3.football.api-sports.io";
-
+const API_BASE = "https://v3.football.api-sports.io";
 const cache = new Map();
-
 
 /* =====================================================
    START
 ===================================================== */
 
 document.addEventListener("DOMContentLoaded",()=>{
-
- const saved =
-  localStorage.getItem("football_api_key");
-
+ const saved = localStorage.getItem("football_api_key");
  if(saved){
   document.getElementById("api-key").value=saved;
  }
 
- const today =
-  new Intl.DateTimeFormat("en-CA",{
+ const today = new Intl.DateTimeFormat("en-CA",{
    timeZone:"Africa/Casablanca",
    year:"numeric",
    month:"2-digit",
@@ -825,136 +818,69 @@ document.addEventListener("DOMContentLoaded",()=>{
 
  document.getElementById("selected-date").value=today;
 
- if(
-  localStorage.getItem("lahcen_logged")==="true"
- ){
+ if(localStorage.getItem("lahcen_logged")==="true"){
   showMain();
  }
-
 });
 
-
 /* =====================================================
-   LOGIN
+   LOGIN & UTILS
 ===================================================== */
 
 function login(){
-
- const user =
-  document.getElementById("user-input")
-  .value.trim().toLowerCase();
-
- const pass =
-  document.getElementById("pass-input")
-  .value.trim().toLowerCase();
+ const user = document.getElementById("user-input").value.trim().toLowerCase();
+ const pass = document.getElementById("pass-input").value.trim().toLowerCase();
 
  if(user==="lahcen" && pass==="lahcen"){
-
-  localStorage.setItem(
-   "lahcen_logged",
-   "true"
-  );
-
+  localStorage.setItem("lahcen_logged","true");
   showMain();
-
  }else{
-
   alert("بيانات الدخول غير صحيحة");
-
  }
-
 }
-
 
 function logout(){
-
  localStorage.removeItem("lahcen_logged");
-
- document.getElementById("dashboard")
-  .style.display="none";
-
- document.getElementById("login-box")
-  .style.display="flex";
-
+ document.getElementById("dashboard").style.display="none";
+ document.getElementById("login-box").style.display="flex";
 }
-
 
 function showMain(){
-
- document.getElementById("login-box")
-  .style.display="none";
-
- document.getElementById("dashboard")
-  .style.display="block";
-
+ document.getElementById("login-box").style.display="none";
+ document.getElementById("dashboard").style.display="block";
 }
-
 
 function saveApiKey(){
-
- localStorage.setItem(
-  "football_api_key",
-  document.getElementById("api-key")
-   .value.trim()
- );
-
+ localStorage.setItem("football_api_key", document.getElementById("api-key").value.trim());
 }
-
 
 /* =====================================================
    API REQUEST
 ===================================================== */
 
 async function api(endpoint,headers){
-
- const response =
-  await fetch(
-   API_BASE+endpoint,
-   {
-    method:"GET",
-    headers
-   }
-  );
-
+ const response = await fetch(API_BASE+endpoint, { method:"GET", headers });
  if(!response.ok){
-
-  throw new Error(
-   "HTTP "+response.status
-  );
-
+  throw new Error("HTTP "+response.status);
  }
-
- const data =
-  await response.json();
-
- if(
-  data.errors &&
-  Object.keys(data.errors).length
- ){
-
-  throw new Error(
-   Object.values(data.errors).join(" | ")
-  );
-
+ const data = await response.json();
+ if(data.errors && Object.keys(data.errors).length){
+  throw new Error(Object.values(data.errors).join(" | "));
  }
-
  return data.response || [];
-
 }
-
 
 /* =====================================================
    CACHE WITH LOCALSTORAGE (تفادي استهلاك API)
 ===================================================== */
 
 async function cached(endpoint,headers){
-
  const localCacheKey = "api_cache_" + endpoint;
  const localCacheTimeKey = "api_cache_time_" + endpoint;
  const cachedData = localStorage.getItem(localCacheKey);
  const cachedTime = localStorage.getItem(localCacheTimeKey);
  const now = new Date().getTime();
- const EXPIRE_TIME = 60 * 60 * 1000; // صلاحية البيانات: 1 ساعة
+ const EXPIRE_TIME = 60 * 60 * 1000; // ساعة واحدة
 
  if(cachedData && cachedTime && (now - cachedTime < EXPIRE_TIME)){
   return JSON.parse(cachedData);
@@ -964,9 +890,7 @@ async function cached(endpoint,headers){
   return cache.get(endpoint);
  }
 
- const data =
-  await api(endpoint,headers);
-
+ const data = await api(endpoint,headers);
  cache.set(endpoint,data);
  try{
   localStorage.setItem(localCacheKey, JSON.stringify(data));
@@ -974,504 +898,257 @@ async function cached(endpoint,headers){
  }catch(e){}
 
  return data;
-
 }
 
-
 /* =====================================================
-   TIME
+   HELPERS & MATH
 ===================================================== */
 
 function moroccoTime(date){
-
- return new Date(date).toLocaleTimeString(
-  "fr-FR",
-  {
-   timeZone:"Africa/Casablanca",
-   hour:"2-digit",
-   minute:"2-digit",
-   hour12:false
-  }
- );
-
+ return new Date(date).toLocaleTimeString("fr-FR",{
+   timeZone:"Africa/Casablanca", hour:"2-digit", minute:"2-digit", hour12:false
+ });
 }
 
-
-/* =====================================================
-   DATE
-===================================================== */
-
-function dateMorocco(date){
-
- return new Date(date).toLocaleDateString(
-  "fr-FR",
-  {
-   timeZone:"Africa/Casablanca",
-   day:"2-digit",
-   month:"2-digit",
-   year:"numeric"
-  }
- );
-
-}
-
-
-/* =====================================================
-   NUMBER HELPERS
-===================================================== */
-
-function num(value){
-
- const n=parseFloat(value);
-
- return Number.isFinite(n)?n:0;
-
-}
-
-
-function clamp(v,min,max){
-
- return Math.max(min,Math.min(max,v));
-
-}
-
-
-function pct(v){
-
- return Math.round(
-  clamp(v,0,99)
- )+"%";
-
-}
-
-
-/* =====================================================
-   FORM SCORE
-===================================================== */
+function num(value){ const n=parseFloat(value); return Number.isFinite(n)?n:0; }
+function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
+function pct(v){ return Math.round(clamp(v,0,99))+"%"; }
 
 function calculateForm(form){
-
- if(!form){
-  return 50;
- }
-
- const letters =
-  form
-   .toUpperCase()
-   .split("")
-   .filter(x=>["W","D","L"].includes(x));
-
- if(!letters.length){
-  return 50;
- }
-
+ if(!form) return 50;
+ const letters = form.toUpperCase().split("").filter(x=>["W","D","L"].includes(x));
+ if(!letters.length) return 50;
  let score=50;
-
  letters.forEach(x=>{
-
   if(x==="W") score+=8;
   if(x==="D") score+=2;
   if(x==="L") score-=7;
-
  });
-
  return clamp(score,15,85);
-
 }
 
-
-/* =====================================================
-   POISSON
-===================================================== */
-
-function factorial(n){
-
- let r=1;
-
- for(let i=2;i<=n;i++){
-  r*=i;
- }
-
- return r;
-
-}
-
-
-function poisson(lambda,k){
-
- return (
-  Math.exp(-lambda) *
-  Math.pow(lambda,k) /
-  factorial(k)
- );
-
-}
-
-
-/* =====================================================
-   MATRIX
-===================================================== */
+function factorial(n){ let r=1; for(let i=2;i<=n;i++){ r*=i; } return r; }
+function poisson(lambda,k){ return (Math.exp(-lambda) * Math.pow(lambda,k) / factorial(k)); }
 
 function createMatrix(homeLambda,awayLambda){
-
  const matrix=[];
-
  for(let home=0;home<=7;home++){
-
   for(let away=0;away<=7;away++){
-
-   const probability =
-    poisson(homeLambda,home) *
-    poisson(awayLambda,away);
-
-   matrix.push({
-    home,
-    away,
-    probability
-   });
-
+   matrix.push({ home, away, probability: poisson(homeLambda,home) * poisson(awayLambda,away) });
   }
-
  }
-
  return matrix;
-
 }
-
-
-/* =====================================================
-   TEAM STATISTICS EXTRACTION
-===================================================== */
 
 function extractGoals(stats){
-
- if(!stats){
-
-  return {
-   scored:1.2,
-   conceded:1.2
-  };
-
- }
-
- let scored=1.2;
- let conceded=1.2;
-
-
+ if(!stats) return { scored:1.2, conceded:1.2 };
+ let scored=1.2, conceded=1.2;
  try{
-
-  const totalFor =
-   stats.goals?.for?.total;
-
-  const totalAgainst =
-   stats.goals?.against?.total;
-
-
-  if(totalFor){
-
-   scored =
-    num(
-     totalFor.total ||
-     totalFor.home ||
-     totalFor.away
-    );
-
-  }
-
-
-  if(totalAgainst){
-
-   conceded =
-    num(
-     totalAgainst.total ||
-     totalAgainst.home ||
-     totalAgainst.away
-    );
-
-  }
-
+  const totalFor = stats.goals?.for?.total;
+  const totalAgainst = stats.goals?.against?.total;
+  if(totalFor) scored = num(totalFor.total || totalFor.home || totalFor.away);
+  if(totalAgainst) conceded = num(totalAgainst.total || totalAgainst.home || totalAgainst.away);
  }catch(e){}
-
-
- return {
-  scored:scored || 1.2,
-  conceded:conceded || 1.2
- };
-
+ return { scored:scored || 1.2, conceded:conceded || 1.2 };
 }
 
-
 /* =====================================================
-   ADVANCED PREDICTION
+   PREDICTION ENGINE
 ===================================================== */
 
 function buildPrediction(data){
+ const homeGoals = extractGoals(data.homeStats);
+ const awayGoals = extractGoals(data.awayStats);
 
- const homeGoals =
-  extractGoals(data.homeStats);
-
- const awayGoals =
-  extractGoals(data.awayStats);
-
-
- /*
-  Attack + opponent defence
- */
-
- let homeLambda =
-  homeGoals.scored*0.55 +
-  awayGoals.conceded*0.45;
-
- let awayLambda =
-  awayGoals.scored*0.55 +
-  homeGoals.conceded*0.45;
-
-
- /*
-  Home advantage
- */
-
+ let homeLambda = homeGoals.scored*0.55 + awayGoals.conceded*0.45;
+ let awayLambda = awayGoals.scored*0.55 + homeGoals.conceded*0.45;
  homeLambda*=1.08;
 
+ const homeForm = calculateForm(data.homeStats?.form);
+ const awayForm = calculateForm(data.awayStats?.form);
+ const formDifference = (homeForm-awayForm)/100;
 
- /*
-  FORM
- */
+ homeLambda *= 1+(formDifference*.18);
+ awayLambda *= 1-(formDifference*.18);
 
- const homeForm =
-  calculateForm(data.homeStats?.form);
+ if(data.homeInjuries.length>=4) homeLambda*=0.95;
+ if(data.awayInjuries.length>=4) awayLambda*=0.95;
 
- const awayForm =
-  calculateForm(data.awayStats?.form);
+ homeLambda=clamp(homeLambda,.15,4);
+ awayLambda=clamp(awayLambda,.15,4);
 
- const formDifference =
-  (homeForm-awayForm)/100;
+ const matrix = createMatrix(homeLambda, awayLambda);
 
-
- homeLambda *=
-  1+(formDifference*.18);
-
- awayLambda *=
-  1-(formDifference*.18);
-
-
- /*
-  Injuries adjustment
- */
-
- const homeInjuries =
-  data.homeInjuries.length;
-
- const awayInjuries =
-  data.awayInjuries.length;
-
-
- if(homeInjuries>=4){
-  homeLambda*=0.95;
- }
-
- if(awayInjuries>=4){
-  awayLambda*=0.95;
- }
-
-
- homeLambda=
-  clamp(homeLambda,.15,4);
-
- awayLambda=
-  clamp(awayLambda,.15,4);
-
-
- const matrix =
-  createMatrix(
-   homeLambda,
-   awayLambda
-  );
-
-
- let homeWin=0;
- let draw=0;
- let awayWin=0;
-
- let over15=0;
- let over25=0;
- let over35=0;
-
- let btts=0;
-
+ let homeWin=0, draw=0, awayWin=0, over15=0, over25=0, over35=0, btts=0;
 
  matrix.forEach(x=>{
-
-  if(x.home>x.away){
-   homeWin+=x.probability;
-  }
-
-  if(x.home===x.away){
-   draw+=x.probability;
-  }
-
-  if(x.home<x.away){
-   awayWin+=x.probability;
-  }
-
-  const total =
-   x.home+x.away;
-
-  if(total>=2){
-   over15+=x.probability;
-  }
-
-  if(total>=3){
-   over25+=x.probability;
-  }
-
-  if(total>=4){
-   over35+=x.probability;
-  }
-
-  if(
-   x.home>0 &&
-   x.away>0
-  ){
-   btts+=x.probability;
-  }
-
+  if(x.home>x.away) homeWin+=x.probability;
+  if(x.home===x.away) draw+=x.probability;
+  if(x.home<x.away) awayWin+=x.probability;
+  const total = x.home+x.away;
+  if(total>=2) over15+=x.probability;
+  if(total>=3) over25+=x.probability;
+  if(total>=4) over35+=x.probability;
+  if(x.home>0 && x.away>0) btts+=x.probability;
  });
 
-
- homeWin*=100;
- draw*=100;
- awayWin*=100;
-
- over15*=100;
- over25*=100;
- over35*=100;
-
+ homeWin*=100; draw*=100; awayWin*=100;
+ over15*=100; over25*=100; over35*=100;
  btts*=100;
 
-
- const under15=
-  100-over15;
-
- const under25=
-  100-over25;
-
- const under35=
-  100-over35;
-
- const noBtts=
-  100-btts;
-
-
- const double1X =
-  homeWin+draw;
-
- const doubleX2 =
-  draw+awayWin;
-
- const double12 =
-  homeWin+awayWin;
-
-
- /*
-  Exact scores
- */
-
- const exact =
-  [...matrix]
-   .sort(
-    (a,b)=>
-     b.probability-a.probability
-   )
-   .slice(0,8)
-   .map(x=>({
-
-    score:
-     `${x.home}-${x.away}`,
-
-    probability:
-     x.probability*100
-
-   }));
-
-
- /*
-  Main candidates
- */
+ const exact = [...matrix].sort((a,b)=>b.probability-a.probability).slice(0,8)
+  .map(x=>({ score:`${x.home}-${x.away}`, probability:x.probability*100 }));
 
  const candidates=[
-
-  {
-   name:"1X",
-   probability:double1X
-  },
-
-  {
-   name:"X2",
-   probability:doubleX2
-  },
-
-  {
-   name:"12",
-   probability:double12
-  },
-
-  {
-   name:"Over 1.5",
-   probability:over15
-  },
-
-  {
-   name:"Under 2.5",
-   probability:under25
-  },
-
-  {
-   name:"BTTS",
-   probability:btts
-  },
-
-  {
-   name:"NO BTTS",
-   probability:noBtts
-  },
-
-  {
-   name:"1",
-   probability:homeWin
-  },
-
-  {
-   name:"X",
-   probability:draw
-  },
-
-  {
-   name:"2",
-   probability:awayWin
-  }
-
+  { name:"1X", probability: homeWin+draw },
+  { name:"X2", probability: draw+awayWin },
+  { name:"12", probability: homeWin+awayWin },
+  { name:"Over 1.5", probability: over15 },
+  { name:"Under 2.5", probability: 100-over25 },
+  { name:"BTTS", probability: btts },
+  { name:"NO BTTS", probability: 100-btts },
+  { name:"1", probability: homeWin },
+  { name:"X", probability: draw },
+  { name:"2", probability: awayWin }
  ];
 
- return {
-  homeWin,
-  draw,
-  awayWin,
-  over15,
-  over25,
-  over35,
-  under15,
-  under25,
-  under35,
-  btts,
-  noBtts,
-  double1X,
-  doubleX2,
-  double12,
-  exact,
-  candidates
- };
+ candidates.sort((a,b)=>b.probability-a.probability);
 
+ return {
+  homeWin, draw, awayWin, over15, over25, over35,
+  under15:100-over15, under25:100-over25, under35:100-over35,
+  btts, noBtts:100-btts, exact, best: candidates[0]
+ };
+}
+
+/* =====================================================
+   LOAD FIXTURES & ANALYZE
+===================================================== */
+
+async function loadFixtures(){
+ const apiKey = document.getElementById("api-key").value.trim();
+ const date = document.getElementById("selected-date").value;
+
+ if(!apiKey){ alert("يرجى إدخال API Key أولاً!"); return; }
+
+ const loading = document.getElementById("loading");
+ const resultBox = document.getElementById("result-box");
+
+ loading.style.display="block";
+ resultBox.innerHTML="";
+
+ try{
+  const headers = { "x-apisports-key": apiKey };
+  const fixtures = await cached(`/fixtures?date=${date}`, headers);
+
+  loading.style.display="none";
+
+  if(!fixtures.length){
+   resultBox.innerHTML = `<div class="panel info">لا توجد مباريات في هذا التاريخ</div>`;
+   return;
+  }
+
+  // تجميع المباريات حسب الدوري
+  const leagues = {};
+  fixtures.forEach(f=>{
+   const lName = f.league.name;
+   if(!leagues[lName]) leagues[lName] = [];
+   leagues[lName].push(f);
+  });
+
+  let html = "";
+  for(const [leagueName, matches] of Object.entries(leagues)){
+   html += `
+   <div class="league">
+    <button class="league-head" onclick="toggleLeague(this)">
+     <span class="league-name">🏆 ${leagueName}</span>
+     <span class="count">${matches.length} مباريات</span>
+    </button>
+    <div class="league-content">`;
+
+   matches.forEach(m=>{
+    html += `
+    <div class="match">
+     <div class="match-top">
+      <span class="time">⏰ ${moroccoTime(m.fixture.date)}</span>
+      <span class="status-live">${m.fixture.status.short}</span>
+     </div>
+     <div class="teams">
+      <div class="team">${m.teams.home.name}</div>
+      <div class="vs">VS</div>
+      <div class="team">${m.teams.away.name}</div>
+     </div>
+     <button class="analyze" onclick="analyzeMatch(${m.fixture.id}, ${m.teams.home.id}, ${m.teams.away.id}, ${m.league.id}, ${m.league.season}, this)">
+      🤖 تحليل المباراة بالذكاء الاصطناعي
+     </button>
+     <div id="analysis-${m.fixture.id}" class="analysis"></div>
+    </div>`;
+   });
+
+   html += `</div></div>`;
+  }
+
+  resultBox.innerHTML = html;
+
+ }catch(err){
+  loading.style.display="none";
+  resultBox.innerHTML = `<div class="panel info error">خطأ: ${err.message}</div>`;
+ }
+}
+
+function toggleLeague(btn){
+ const content = btn.nextElementSibling;
+ content.style.display = content.style.display === "block" ? "none" : "block";
+}
+
+async function analyzeMatch(fixtureId, homeId, awayId, leagueId, season, btn){
+ const apiKey = document.getElementById("api-key").value.trim();
+ const headers = { "x-apisports-key": apiKey };
+ const box = document.getElementById(`analysis-${fixtureId}`);
+
+ btn.disabled = true;
+ btn.innerText = "جاري التحليل واستخراج البيانات...";
+
+ try{
+  const [homeStats, awayStats, homeInjuries, awayInjuries] = await Promise.all([
+   cached(`/teams/statistics?season=${season}&team=${homeId}&league=${leagueId}`, headers),
+   cached(`/teams/statistics?season=${season}&team=${awayId}&league=${leagueId}`, headers),
+   cached(`/injuries?fixture=${fixtureId}&team=${homeId}`, headers),
+   cached(`/injuries?fixture=${fixtureId}&team=${awayId}`, headers)
+  ]);
+
+  const pred = buildPrediction({ homeStats, awayStats, homeInjuries, awayInjuries });
+
+  box.innerHTML = `
+   <div class="best">
+    <small>التوقع الرئيسي الموصى به</small>
+    <strong>${pred.best.name}</strong>
+    <span>نسبة النجاح المتوقعة: ${pct(pred.best.probability)}</span>
+   </div>
+   <div class="grid">
+    <div class="mini"><label>1 (فوز صاحب الأرض)</label><strong>${pct(pred.homeWin)}</strong></div>
+    <div class="mini"><label>X (التعادل)</label><strong>${pct(pred.draw)}</strong></div>
+    <div class="mini"><label>2 (فوز الضيف)</label><strong>${pct(pred.awayWin)}</strong></div>
+    <div class="mini"><label>BTTS (كلا الفريقين يسجل)</label><strong>${pct(pred.btts)}</strong></div>
+   </div>
+   <div class="section">
+    <div class="section-title">الأهداف المتوقعة</div>
+    <table class="table">
+     <tr><td class="name">Over 1.5</td><td class="value">${pct(pred.over15)}</td></tr>
+     <tr><td class="name">Over 2.5</td><td class="value">${pct(pred.over25)}</td></tr>
+     <tr><td class="name">Under 2.5</td><td class="value">${pct(pred.under25)}</td></tr>
+    </table>
+   </div>`;
+
+  box.style.display = "block";
+  btn.innerText = "تم التحليل بنجاح ✓";
+
+ }catch(err){
+  btn.disabled = false;
+  btn.innerText = "إعادة التحليل 🔄";
+  box.innerHTML = `<div class="info error">خطأ أثناء التحليل: ${err.message}</div>`;
+  box.style.display = "block";
+ }
 }
 
 </script>

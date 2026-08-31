@@ -1,272 +1,2732 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LAHCEN LEAGUES A-Z WITH TIME</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin: 0; padding: 0; }
-    body { background: linear-gradient(135deg, #07090e 0%, #0f172a 100%); color: #f3f4f6; min-height: 100vh; padding: 15px; display: flex; justify-content: center; align-items: flex-start; }
-    .container { width: 100%; max-width: 650px; margin-top: 10px; }
-    #login-box { background: rgba(17, 24, 39, 0.95); border: 1px solid #f59e0b; padding: 35px 20px; border-radius: 20px; text-align: center; box-shadow: 0 15px 35px rgba(245, 158, 11, 0.15); margin-top: 40px; }
-    #login-box h2 { color: #f59e0b; font-size: 22px; font-weight: 800; margin-bottom: 8px; }
-    .input-field { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #374151; background: #1f2937; color: #fff; font-size: 15px; outline: none; margin-bottom: 12px; font-weight: bold; text-align: center; }
-    #dashboard { display: none; }
-    .header { text-align: center; margin-bottom: 20px; }
-    .header h1 { color: #f59e0b; font-size: 22px; font-weight: 900; }
-    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .btn-logout { background: #374151; color: #ef4444; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; font-weight: bold; }
-    .card-box { background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin-bottom: 20px; }
-    .date-label { font-size: 13px; color: #f59e0b; font-weight: 700; display: block; margin-bottom: 6px; text-align: right; }
-    .btn-gold { width: 100%; padding: 14px; border-radius: 10px; border: none; background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%); color: #000; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); margin-top: 5px; }
-    
-    .league-accordion { background: #1f2937; border: 1px solid #374151; border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
-    .league-header-btn { width: 100%; background: #111827; color: #f59e0b; padding: 14px; text-align: right; border: none; font-size: 15px; font-weight: 800; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-    .league-header-btn:hover { background: #1a2436; }
-    .league-count { background: #d97706; color: #000; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
-    .league-content { display: none; padding: 12px; background: #0b0f19; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    .match-card { background: #111827; border: 1px solid #1f2937; border-radius: 14px; padding: 14px; margin-bottom: 15px; box-shadow: 0 6px 15px rgba(0,0,0,0.3); border-right: 4px solid #f59e0b; position: relative; }
-    .match-time { display: inline-block; background: #374151; color: #38bdf8; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 800; margin-bottom: 8px; border: 1px solid #4b5563; }
-    .teams-header { text-align: center; font-size: 15px; font-weight: 900; color: #fff; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #1f2937; }
-    .teams-header span { color: #f59e0b; }
-    .section-title { font-size: 11px; color: #38bdf8; font-weight: 800; margin: 8px 0 4px 0; text-align: right; border-right: 3px solid #38bdf8; padding-right: 6px; }
-    .prob-table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
-    .prob-table td { padding: 5px 6px; font-size: 11px; border-bottom: 1px solid #1f2937; }
-    .prob-name { color: #d1d5db; font-weight: 700; text-align: right; }
-    .prob-val { color: #10b981; font-weight: 900; text-align: left; }
-    .prob-val.highlight { color: #f59e0b; font-size: 12px; }
-    #loading { display: none; text-align: center; color: #f59e0b; padding: 15px; font-weight: bold; font-size: 13px; }
-    .api-settings { background: #1e1e1e; padding: 12px; border-radius: 10px; margin-bottom: 15px; border: 1px dashed #ef4444; }
-  </style>
+<title>LAHCEN AI FOOTBALL</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+ box-sizing:border-box;
+ margin:0;
+ padding:0;
+ font-family:Cairo,sans-serif
+}
+
+:root{
+ --bg:#03060b;
+ --panel:#0b111c;
+ --panel2:#101827;
+ --gold:#f5b942;
+ --gold2:#ffd978;
+ --blue:#38bdf8;
+ --green:#22c55e;
+ --red:#ef4444;
+ --yellow:#facc15;
+ --muted:#94a3b8;
+ --border:rgba(255,255,255,.08);
+ --white:#f8fafc;
+}
+
+body{
+ min-height:100vh;
+ color:var(--white);
+ background:
+ radial-gradient(circle at 10% 5%,rgba(245,185,66,.11),transparent 25%),
+ radial-gradient(circle at 90% 10%,rgba(56,189,248,.08),transparent 25%),
+ linear-gradient(145deg,#020409,#09111f 55%,#020409);
+ padding:10px;
+}
+
+.container{
+ width:100%;
+ max-width:950px;
+ margin:auto;
+}
+
+button,input{
+ font-family:Cairo,sans-serif;
+}
+
+button{
+ cursor:pointer;
+}
+
+#login-box{
+ min-height:calc(100vh - 20px);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+
+.login{
+ width:100%;
+ max-width:440px;
+ padding:38px 22px;
+ text-align:center;
+ border-radius:30px;
+ background:linear-gradient(145deg,rgba(16,24,39,.98),rgba(4,8,15,.98));
+ border:1px solid rgba(245,185,66,.25);
+ box-shadow:0 30px 90px rgba(0,0,0,.65);
+}
+
+.logo{
+ width:90px;
+ height:90px;
+ margin:auto auto 18px;
+ border-radius:27px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:42px;
+ background:linear-gradient(145deg,#1a2130,#070b13);
+ border:1px solid rgba(245,185,66,.35);
+ box-shadow:0 0 45px rgba(245,185,66,.13);
+}
+
+.login h1{
+ font-size:25px;
+ font-weight:900;
+ background:linear-gradient(90deg,#e3a12d,#fff,#ffd978);
+ -webkit-background-clip:text;
+ color:transparent;
+}
+
+.login p{
+ color:var(--muted);
+ font-size:10px;
+ margin:5px 0 25px;
+}
+
+.input{
+ width:100%;
+ padding:14px;
+ margin-bottom:11px;
+ border-radius:13px;
+ border:1px solid var(--border);
+ background:#070d17;
+ color:white;
+ outline:none;
+ text-align:center;
+ font-weight:700;
+}
+
+.input:focus{
+ border-color:rgba(245,185,66,.5);
+ box-shadow:0 0 20px rgba(245,185,66,.08);
+}
+
+.gold{
+ width:100%;
+ padding:14px;
+ border:0;
+ border-radius:13px;
+ color:#050505;
+ font-weight:900;
+ background:linear-gradient(100deg,#d69725,#ffdf82,#dfa12c);
+ box-shadow:0 8px 28px rgba(245,185,66,.18);
+}
+
+#dashboard{
+ display:none;
+}
+
+.top{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ padding:4px 2px 12px;
+}
+
+.online{
+ color:#4ade80;
+ font-size:10px;
+ font-weight:900;
+}
+
+.logout{
+ color:#fb7185;
+ background:#160e15;
+ border:1px solid rgba(239,68,68,.18);
+ border-radius:9px;
+ padding:7px 10px;
+ font-size:9px;
+ font-weight:800;
+}
+
+.hero{
+ position:relative;
+ overflow:hidden;
+ padding:28px 15px;
+ text-align:center;
+ border-radius:28px;
+ border:1px solid rgba(245,185,66,.2);
+ background:linear-gradient(145deg,rgba(245,185,66,.08),rgba(8,14,25,.96));
+ box-shadow:0 25px 65px rgba(0,0,0,.4);
+ margin-bottom:13px;
+}
+
+.hero h1{
+ font-size:28px;
+ font-weight:900;
+}
+
+.hero h1 span{
+ color:var(--gold)
+}
+
+.hero p{
+ color:var(--muted);
+ font-size:10px;
+ margin-top:3px;
+}
+
+.badges{
+ display:flex;
+ justify-content:center;
+ flex-wrap:wrap;
+ gap:6px;
+ margin-top:14px;
+}
+
+.badge{
+ padding:5px 9px;
+ border-radius:20px;
+ background:rgba(255,255,255,.035);
+ border:1px solid var(--border);
+ color:#cbd5e1;
+ font-size:8px;
+ font-weight:800;
+}
+
+.badge.green{color:#4ade80}
+.badge.gold{color:var(--gold2)}
+.badge.blue{color:var(--blue)}
+
+.features{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:6px;
+ margin-bottom:13px;
+}
+
+.feature{
+ padding:9px 4px;
+ text-align:center;
+ border:1px solid var(--border);
+ background:rgba(255,255,255,.025);
+ border-radius:12px;
+}
+
+.feature b{
+ display:block;
+ color:var(--gold);
+ font-size:13px;
+}
+
+.feature span{
+ color:var(--muted);
+ font-size:7px;
+}
+
+.panel{
+ background:rgba(10,16,27,.9);
+ border:1px solid var(--border);
+ border-radius:19px;
+ padding:15px;
+ margin-bottom:13px;
+ box-shadow:0 14px 35px rgba(0,0,0,.25);
+}
+
+.label{
+ display:block;
+ color:var(--gold);
+ font-size:10px;
+ font-weight:900;
+ margin-bottom:7px;
+}
+
+.api{
+ border-color:rgba(239,68,68,.18);
+}
+
+.api .label{
+ color:#fb7185;
+}
+
+.status{
+ text-align:center;
+ color:var(--muted);
+ font-size:9px;
+ font-weight:700;
+ margin:8px 0;
+}
+
+.loading{
+ display:none;
+ padding:17px;
+ text-align:center;
+ color:var(--gold);
+ font-size:11px;
+ font-weight:900;
+}
+
+.league{
+ overflow:hidden;
+ margin-bottom:11px;
+ border-radius:17px;
+ border:1px solid var(--border);
+ background:#080e17;
+}
+
+.league-head{
+ width:100%;
+ padding:14px;
+ border:0;
+ background:linear-gradient(90deg,#111a2a,#0a111c);
+ color:white;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ text-align:right;
+ font-size:11px;
+ font-weight:900;
+}
+
+.league-name{
+ color:var(--gold2);
+}
+
+.count{
+ padding:4px 8px;
+ border-radius:20px;
+ color:var(--gold);
+ background:rgba(245,185,66,.08);
+ border:1px solid rgba(245,185,66,.14);
+ font-size:8px;
+}
+
+.league-content{
+ display:none;
+ padding:9px;
+}
+
+.match{
+ position:relative;
+ padding:13px;
+ margin-bottom:10px;
+ border-radius:17px;
+ border:1px solid rgba(255,255,255,.065);
+ background:linear-gradient(145deg,#101928,#080e18);
+}
+
+.match-top{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:9px;
+}
+
+.time{
+ color:var(--blue);
+ background:rgba(56,189,248,.07);
+ border:1px solid rgba(56,189,248,.15);
+ padding:4px 8px;
+ border-radius:8px;
+ font-size:8px;
+ font-weight:900;
+}
+
+.status-live{
+ color:#4ade80;
+ font-size:8px;
+ font-weight:900;
+}
+
+.teams{
+ display:grid;
+ grid-template-columns:1fr 55px 1fr;
+ gap:7px;
+ align-items:center;
+ text-align:center;
+ padding:10px 0;
+}
+
+.team{
+ font-size:11px;
+ font-weight:900;
+ line-height:1.5;
+}
+
+.vs{
+ width:42px;
+ height:42px;
+ margin:auto;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border-radius:50%;
+ background:#060a11;
+ color:var(--gold);
+ border:1px solid rgba(245,185,66,.25);
+ font-size:9px;
+ font-weight:900;
+}
+
+.analyze{
+ width:100%;
+ padding:11px;
+ border:0;
+ border-radius:11px;
+ background:linear-gradient(90deg,#c98a22,#ffd66e,#d99a27);
+ color:#080808;
+ font-size:9px;
+ font-weight:900;
+}
+
+.analyze:disabled{
+ opacity:.5;
+ cursor:wait;
+}
+
+.analysis{
+ display:none;
+ margin-top:12px;
+ border-top:1px solid rgba(255,255,255,.06);
+ padding-top:12px;
+}
+
+.best{
+ text-align:center;
+ padding:14px;
+ border-radius:15px;
+ background:linear-gradient(145deg,rgba(245,185,66,.12),rgba(245,185,66,.025));
+ border:1px solid rgba(245,185,66,.22);
+ margin-bottom:8px;
+}
+
+.best small{
+ color:var(--muted);
+ font-size:8px;
+ font-weight:800;
+}
+
+.best strong{
+ display:block;
+ color:var(--gold2);
+ font-size:22px;
+ margin:2px 0;
+}
+
+.best span{
+ color:#4ade80;
+ font-size:9px;
+ font-weight:900;
+}
+
+.confidence{
+ display:inline-block;
+ margin-top:5px;
+ padding:4px 8px;
+ border-radius:20px;
+ font-size:8px;
+ font-weight:900;
+}
+
+.conf-high{
+ color:#4ade80;
+ background:rgba(34,197,94,.08);
+ border:1px solid rgba(34,197,94,.18);
+}
+
+.conf-medium{
+ color:#facc15;
+ background:rgba(250,204,21,.08);
+ border:1px solid rgba(250,204,21,.18);
+}
+
+.conf-low{
+ color:#fb7185;
+ background:rgba(239,68,68,.08);
+ border:1px solid rgba(239,68,68,.18);
+}
+
+.grid{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:7px;
+ margin-top:8px;
+}
+
+.mini{
+ padding:9px;
+ border-radius:11px;
+ background:rgba(255,255,255,.025);
+ border:1px solid rgba(255,255,255,.05);
+}
+
+.mini label{
+ display:block;
+ color:var(--muted);
+ font-size:7px;
+}
+
+.mini strong{
+ font-size:11px;
+}
+
+.section{
+ margin-top:12px;
+}
+
+.section-title{
+ color:var(--blue);
+ border-right:3px solid var(--blue);
+ padding-right:6px;
+ margin-bottom:5px;
+ font-size:9px;
+ font-weight:900;
+}
+
+.table{
+ width:100%;
+ border-collapse:collapse;
+}
+
+.table td{
+ padding:5px 3px;
+ border-bottom:1px solid rgba(255,255,255,.045);
+ font-size:8px;
+}
+
+.name{
+ color:#cbd5e1;
+ font-weight:700;
+}
+
+.value{
+ text-align:left;
+ color:#4ade80;
+ font-weight:900;
+}
+
+.hot{
+ color:var(--gold2);
+}
+
+.scores{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:5px;
+}
+
+.score{
+ padding:7px 2px;
+ text-align:center;
+ border-radius:8px;
+ background:#050a11;
+ border:1px solid rgba(255,255,255,.05);
+}
+
+.score strong{
+ display:block;
+ font-size:11px;
+}
+
+.score small{
+ color:var(--muted);
+ font-size:7px;
+}
+
+.info{
+ margin-top:8px;
+ padding:8px;
+ border-radius:9px;
+ text-align:center;
+ background:rgba(56,189,248,.04);
+ border:1px solid rgba(56,189,248,.09);
+ color:#93c5fd;
+ font-size:7px;
+ font-weight:700;
+}
+
+.warning{
+ color:#facc15;
+ background:rgba(250,204,21,.05);
+ border-color:rgba(250,204,21,.12);
+}
+
+.error{
+ color:#f87171;
+ background:rgba(239,68,68,.05);
+ border-color:rgba(239,68,68,.12);
+}
+
+.greenbox{
+ color:#4ade80;
+ background:rgba(34,197,94,.05);
+ border-color:rgba(34,197,94,.12);
+}
+
+.data-list{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:6px;
+}
+
+.data{
+ padding:8px;
+ border-radius:9px;
+ background:rgba(255,255,255,.025);
+ border:1px solid rgba(255,255,255,.05);
+}
+
+.data small{
+ display:block;
+ color:var(--muted);
+ font-size:7px;
+}
+
+.data b{
+ font-size:10px;
+}
+
+@media(max-width:430px){
+
+ body{
+  padding:7px;
+ }
+
+ .hero h1{
+  font-size:23px;
+ }
+
+ .team{
+  font-size:9px;
+ }
+
+ .features{
+  grid-template-columns:repeat(2,1fr);
+ }
+
+}
+
+</style>
 </head>
+
 <body>
 
 <div class="container">
-  <div id="login-box">
-    <h2>👑 LAHCEN VIP ENGINE</h2>
-    <p>تصنيف الدوريات أبجدياً (A-Z) مع التوقيت المغربي</p>
-    <input type="text" id="user-input" class="input-field" placeholder="اسم المستكشف (lahcen)">
-    <input type="password" id="pass-input" class="input-field" placeholder="كلمة المرور (lahcen)">
-    <button class="btn-gold" onclick="login()">الدخول إلى المنصة 🚀</button>
-  </div>
 
-  <div id="dashboard">
-    <div class="top-bar">
-      <span style="font-size: 11px; color: #10b981; font-weight: bold;">🟢 متصل بنجاح</span>
-      <button class="btn-logout" onclick="logout()">تسجيل الخروج 🚪</button>
-    </div>
+<!-- LOGIN -->
 
-    <div class="header">
-      <h1>🧠 LAHCEN LEAGUES (A-Z)</h1>
-      <p id="api-status" style="color:#10b981; font-size:12px; font-weight:bold;">✅ مرتبة أبجدياً + توقيت المغرب 🇲🇦</p>
-    </div>
+<div id="login-box">
 
-    <div class="api-settings">
-      <label class="date-label" style="color: #ef4444;">🔑 مفتاح API-Football الخاص بك:</label>
-      <input type="text" id="api-key" class="input-field" placeholder="ضع مفتاح API هنا..." onchange="saveApiKey()">
-    </div>
+ <div class="login">
 
-    <div class="card-box">
-      <label class="date-label">📅 اختر التاريخ:</label>
-      <input type="date" id="selected-date" class="input-field" style="color-scheme: dark;">
-      <button class="btn-gold" onclick="loadMatchesByDate()">🔍 عرض الدوريات مرتبة أبجدياً (A-Z)</button>
-    </div>
+  <div class="logo">⚽</div>
 
-    <div id="loading">🔍 جاري ترتيب وتنسيق البطولات أبجدياً...</div>
-    <div id="result-box"></div>
-  </div>
+  <h1>LAHCEN AI FOOTBALL</h1>
+
+  <p>PROFESSIONAL FOOTBALL ANALYTICS ENGINE</p>
+
+  <input
+   id="user-input"
+   class="input"
+   placeholder="اسم المستخدم">
+
+  <input
+   id="pass-input"
+   type="password"
+   class="input"
+   placeholder="كلمة المرور">
+
+  <button
+   class="gold"
+   onclick="login()">
+
+   الدخول إلى المنصة 🚀
+
+  </button>
+
+ </div>
+
 </div>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    if (localStorage.getItem("lahcen_logged") === "true") showMain();
-    const savedKey = localStorage.getItem("football_api_key");
-    if(savedKey) document.getElementById("api-key").value = savedKey;
 
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById("selected-date").value = today;
+<!-- DASHBOARD -->
+
+<div id="dashboard">
+
+ <div class="top">
+
+  <span class="online">
+   ● SYSTEM ONLINE
+  </span>
+
+  <button
+   class="logout"
+   onclick="logout()">
+
+   تسجيل الخروج 🚪
+
+  </button>
+
+ </div>
+
+
+ <div class="hero">
+
+  <h1>
+   LAHCEN <span>AI</span> FOOTBALL
+  </h1>
+
+  <p>
+   AUTOMATED FOOTBALL PREDICTION ENGINE
+  </p>
+
+  <div class="badges">
+
+   <span class="badge green">
+    ● LIVE API
+   </span>
+
+   <span class="badge gold">
+    ✦ DATA ENGINE
+   </span>
+
+   <span class="badge blue">
+    🇲🇦 MOROCCO TIME
+   </span>
+
+  </div>
+
+ </div>
+
+
+ <div class="features">
+
+  <div class="feature">
+   <b>1X2</b>
+   <span>RESULT</span>
+  </div>
+
+  <div class="feature">
+   <b>BTTS</b>
+   <span>GOALS</span>
+  </div>
+
+  <div class="feature">
+   <b>EXACT</b>
+   <span>SCORE</span>
+  </div>
+
+  <div class="feature">
+   <b>AI</b>
+   <span>CONFIDENCE</span>
+  </div>
+
+ </div>
+
+
+ <div class="panel api">
+
+  <label class="label">
+   🔑 API-FOOTBALL KEY
+  </label>
+
+  <input
+   id="api-key"
+   class="input"
+   placeholder="ضع API Key هنا"
+   onchange="saveApiKey()">
+
+  <div class="status">
+   المفتاح يبقى محفوظاً في هذا المتصفح
+  </div>
+
+ </div>
+
+
+ <div class="panel">
+
+  <label class="label">
+   📅 اختر تاريخ المباريات
+  </label>
+
+  <input
+   id="selected-date"
+   type="date"
+   class="input"
+   style="color-scheme:dark">
+
+  <button
+   class="gold"
+   onclick="loadFixtures()">
+
+   🔎 عرض مباريات اليوم وتحضير التحليل
+
+  </button>
+
+ </div>
+
+
+ <div id="loading" class="loading">
+
+  🧠 جاري تحميل مباريات اليوم...
+
+ </div>
+
+
+ <div id="result-box"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   LAHCEN AI FOOTBALL ENGINE
+   API-FOOTBALL V3
+===================================================== */
+
+const API_BASE =
+ "https://v3.football.api-sports.io";
+
+const cache = new Map();
+
+
+/* =====================================================
+   START
+===================================================== */
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+ const saved =
+  localStorage.getItem("football_api_key");
+
+ if(saved){
+  document.getElementById("api-key").value=saved;
+ }
+
+ const today =
+  new Intl.DateTimeFormat("en-CA",{
+   timeZone:"Africa/Casablanca",
+   year:"numeric",
+   month:"2-digit",
+   day:"2-digit"
+  }).format(new Date());
+
+ document.getElementById("selected-date").value=today;
+
+ if(
+  localStorage.getItem("lahcen_logged")==="true"
+ ){
+  showMain();
+ }
+
+});
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+function login(){
+
+ const user =
+  document.getElementById("user-input")
+  .value.trim().toLowerCase();
+
+ const pass =
+  document.getElementById("pass-input")
+  .value.trim().toLowerCase();
+
+ if(user==="lahcen" && pass==="lahcen"){
+
+  localStorage.setItem(
+   "lahcen_logged",
+   "true"
+  );
+
+  showMain();
+
+ }else{
+
+  alert("بيانات الدخول غير صحيحة");
+
+ }
+
+}
+
+
+function logout(){
+
+ localStorage.removeItem("lahcen_logged");
+
+ document.getElementById("dashboard")
+  .style.display="none";
+
+ document.getElementById("login-box")
+  .style.display="flex";
+
+}
+
+
+function showMain(){
+
+ document.getElementById("login-box")
+  .style.display="none";
+
+ document.getElementById("dashboard")
+  .style.display="block";
+
+}
+
+
+function saveApiKey(){
+
+ localStorage.setItem(
+  "football_api_key",
+  document.getElementById("api-key")
+   .value.trim()
+ );
+
+}
+
+
+/* =====================================================
+   API REQUEST
+===================================================== */
+
+async function api(endpoint,headers){
+
+ const response =
+  await fetch(
+   API_BASE+endpoint,
+   {
+    method:"GET",
+    headers
+   }
+  );
+
+ if(!response.ok){
+
+  throw new Error(
+   "HTTP "+response.status
+  );
+
+ }
+
+ const data =
+  await response.json();
+
+ if(
+  data.errors &&
+  Object.keys(data.errors).length
+ ){
+
+  throw new Error(
+   Object.values(data.errors).join(" | ")
+  );
+
+ }
+
+ return data.response || [];
+
+}
+
+
+/* =====================================================
+   CACHE
+===================================================== */
+
+async function cached(endpoint,headers){
+
+ if(cache.has(endpoint)){
+  return cache.get(endpoint);
+ }
+
+ const data =
+  await api(endpoint,headers);
+
+ cache.set(endpoint,data);
+
+ return data;
+
+}
+
+
+/* =====================================================
+   TIME
+===================================================== */
+
+function moroccoTime(date){
+
+ return new Date(date).toLocaleTimeString(
+  "fr-FR",
+  {
+   timeZone:"Africa/Casablanca",
+   hour:"2-digit",
+   minute:"2-digit",
+   hour12:false
+  }
+ );
+
+}
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+function dateMorocco(date){
+
+ return new Date(date).toLocaleDateString(
+  "fr-FR",
+  {
+   timeZone:"Africa/Casablanca",
+   day:"2-digit",
+   month:"2-digit",
+   year:"numeric"
+  }
+ );
+
+}
+
+
+/* =====================================================
+   NUMBER HELPERS
+===================================================== */
+
+function num(value){
+
+ const n=parseFloat(value);
+
+ return Number.isFinite(n)?n:0;
+
+}
+
+
+function clamp(v,min,max){
+
+ return Math.max(min,Math.min(max,v));
+
+}
+
+
+function pct(v){
+
+ return Math.round(
+  clamp(v,0,99)
+ )+"%";
+
+}
+
+
+/* =====================================================
+   FORM SCORE
+===================================================== */
+
+function calculateForm(form){
+
+ if(!form){
+  return 50;
+ }
+
+ const letters =
+  form
+   .toUpperCase()
+   .split("")
+   .filter(x=>["W","D","L"].includes(x));
+
+ if(!letters.length){
+  return 50;
+ }
+
+ let score=50;
+
+ letters.forEach(x=>{
+
+  if(x==="W") score+=8;
+  if(x==="D") score+=2;
+  if(x==="L") score-=7;
+
+ });
+
+ return clamp(score,15,85);
+
+}
+
+
+/* =====================================================
+   POISSON
+===================================================== */
+
+function factorial(n){
+
+ let r=1;
+
+ for(let i=2;i<=n;i++){
+  r*=i;
+ }
+
+ return r;
+
+}
+
+
+function poisson(lambda,k){
+
+ return (
+  Math.exp(-lambda) *
+  Math.pow(lambda,k) /
+  factorial(k)
+ );
+
+}
+
+
+/* =====================================================
+   MATRIX
+===================================================== */
+
+function createMatrix(homeLambda,awayLambda){
+
+ const matrix=[];
+
+ for(let home=0;home<=7;home++){
+
+  for(let away=0;away<=7;away++){
+
+   const probability =
+    poisson(homeLambda,home) *
+    poisson(awayLambda,away);
+
+   matrix.push({
+    home,
+    away,
+    probability
+   });
+
+  }
+
+ }
+
+ return matrix;
+
+}
+
+
+/* =====================================================
+   TEAM STATISTICS EXTRACTION
+===================================================== */
+
+function extractGoals(stats){
+
+ if(!stats){
+
+  return {
+   scored:1.2,
+   conceded:1.2
+  };
+
+ }
+
+ let scored=1.2;
+ let conceded=1.2;
+
+
+ try{
+
+  const totalFor =
+   stats.goals?.for?.total;
+
+  const totalAgainst =
+   stats.goals?.against?.total;
+
+
+  if(totalFor){
+
+   scored =
+    num(
+     totalFor.total ||
+     totalFor.home ||
+     totalFor.away
+    );
+
+  }
+
+
+  if(totalAgainst){
+
+   conceded =
+    num(
+     totalAgainst.total ||
+     totalAgainst.home ||
+     totalAgainst.away
+    );
+
+  }
+
+ }catch(e){}
+
+
+ return {
+  scored:scored || 1.2,
+  conceded:conceded || 1.2
+ };
+
+}
+
+
+/* =====================================================
+   ADVANCED PREDICTION
+===================================================== */
+
+function buildPrediction(data){
+
+ const homeGoals =
+  extractGoals(data.homeStats);
+
+ const awayGoals =
+  extractGoals(data.awayStats);
+
+
+ /*
+  Attack + opponent defence
+ */
+
+ let homeLambda =
+  homeGoals.scored*0.55 +
+  awayGoals.conceded*0.45;
+
+ let awayLambda =
+  awayGoals.scored*0.55 +
+  homeGoals.conceded*0.45;
+
+
+ /*
+  Home advantage
+ */
+
+ homeLambda*=1.08;
+
+
+ /*
+  FORM
+ */
+
+ const homeForm =
+  calculateForm(data.homeStats?.form);
+
+ const awayForm =
+  calculateForm(data.awayStats?.form);
+
+ const formDifference =
+  (homeForm-awayForm)/100;
+
+
+ homeLambda *=
+  1+(formDifference*.18);
+
+ awayLambda *=
+  1-(formDifference*.18);
+
+
+ /*
+  Injuries adjustment
+ */
+
+ const homeInjuries =
+  data.homeInjuries.length;
+
+ const awayInjuries =
+  data.awayInjuries.length;
+
+
+ if(homeInjuries>=4){
+  homeLambda*=0.95;
+ }
+
+ if(awayInjuries>=4){
+  awayLambda*=0.95;
+ }
+
+
+ homeLambda=
+  clamp(homeLambda,.15,4);
+
+ awayLambda=
+  clamp(awayLambda,.15,4);
+
+
+ const matrix =
+  createMatrix(
+   homeLambda,
+   awayLambda
+  );
+
+
+ let homeWin=0;
+ let draw=0;
+ let awayWin=0;
+
+ let over15=0;
+ let over25=0;
+ let over35=0;
+
+ let btts=0;
+
+
+ matrix.forEach(x=>{
+
+  if(x.home>x.away){
+   homeWin+=x.probability;
+  }
+
+  if(x.home===x.away){
+   draw+=x.probability;
+  }
+
+  if(x.home<x.away){
+   awayWin+=x.probability;
+  }
+
+  const total =
+   x.home+x.away;
+
+  if(total>=2){
+   over15+=x.probability;
+  }
+
+  if(total>=3){
+   over25+=x.probability;
+  }
+
+  if(total>=4){
+   over35+=x.probability;
+  }
+
+  if(
+   x.home>0 &&
+   x.away>0
+  ){
+   btts+=x.probability;
+  }
+
+ });
+
+
+ homeWin*=100;
+ draw*=100;
+ awayWin*=100;
+
+ over15*=100;
+ over25*=100;
+ over35*=100;
+
+ btts*=100;
+
+
+ const under15=
+  100-over15;
+
+ const under25=
+  100-over25;
+
+ const under35=
+  100-over35;
+
+ const noBtts=
+  100-btts;
+
+
+ const double1X =
+  homeWin+draw;
+
+ const doubleX2 =
+  draw+awayWin;
+
+ const double12 =
+  homeWin+awayWin;
+
+
+ /*
+  Exact scores
+ */
+
+ const exact =
+  [...matrix]
+   .sort(
+    (a,b)=>
+     b.probability-a.probability
+   )
+   .slice(0,8)
+   .map(x=>({
+
+    score:
+     `${x.home}-${x.away}`,
+
+    probability:
+     x.probability*100
+
+   }));
+
+
+ /*
+  Main candidates
+ */
+
+ const candidates=[
+
+  {
+   name:"1X",
+   probability:double1X
+  },
+
+  {
+   name:"X2",
+   probability:doubleX2
+  },
+
+  {
+   name:"12",
+   probability:double12
+  },
+
+  {
+   name:"Over 1.5",
+   probability:over15
+  },
+
+  {
+   name:"Under 2.5",
+   probability:under25
+  },
+
+  {
+   name:"BTTS",
+   probability:btts
+  },
+
+  {
+   name:"NO BTTS",
+   probability:noBtts
+  },
+
+  {
+   name:"1",
+   probability:homeWin
+  },
+
+  {
+   name:"X",
+   probability:draw
+  },
+
+  {
+   name:"2",
+   probability:awayWin
+  }
+
+ ];
+
+
+ /*
+  API prediction signal
+ */
+
+ if(
+  data.apiPrediction &&
+  data.apiPrediction.predictions
+ ){
+
+  const p =
+   data.apiPrediction.predictions;
+
+  if(
+   p.winner &&
+   p.winner.name
+  ){
+
+   const winnerName =
+    p.winner.name;
+
+   const isHome =
+    winnerName === data.homeName;
+
+   const isAway =
+    winnerName === data.awayName;
+
+
+   if(isHome){
+
+    homeWin =
+     homeWin*0.75+25;
+
+   }
+
+   if(isAway){
+
+    awayWin =
+     awayWin*0.75+25;
+
+   }
+
+  }
+
+ }
+
+
+ candidates.sort(
+  (a,b)=>
+   b.probability-a.probability
+ );
+
+
+ const best=candidates[0];
+
+
+ /*
+  Data quality
+ */
+
+ let dataScore=0;
+
+ if(data.homeStats) dataScore+=15;
+ if(data.awayStats) dataScore+=15;
+ if(data.h2h.length) dataScore+=10;
+ if(data.homeInjuries) dataScore+=10;
+ if(data.awayInjuries) dataScore+=10;
+ if(data.apiPrediction) dataScore+=15;
+ if(data.standings) dataScore+=10;
+ if(data.lineups) dataScore+=15;
+
+
+ /*
+  Confidence is NOT fake accuracy.
+ */
+
+ let confidence =
+  best.probability*0.75 +
+  dataScore*0.25;
+
+
+ confidence=
+  clamp(confidence,0,99);
+
+
+ return{
+
+  homeLambda,
+  awayLambda,
+
+  homeWin,
+  draw,
+  awayWin,
+
+  double1X,
+  doubleX2,
+  double12,
+
+  over15,
+  under15,
+
+  over25,
+  under25,
+
+  over35,
+  under35,
+
+  btts,
+  noBtts,
+
+  exact,
+
+  best,
+
+  confidence,
+
+  dataScore,
+
+  homeForm,
+  awayForm,
+
+  homeInjuries,
+  awayInjuries
+
+ };
+
+}
+
+
+/* =====================================================
+   GET TEAM STATS
+===================================================== */
+
+async function getTeamStats(
+ team,
+ league,
+ season,
+ headers
+){
+
+ try{
+
+  const result =
+   await cached(
+    `/teams/statistics?team=${team}&league=${league}&season=${season}`,
+    headers
+   );
+
+  return result[0] || null;
+
+ }catch(e){
+
+  return null;
+
+ }
+
+}
+
+
+/* =====================================================
+   GET H2H
+===================================================== */
+
+async function getH2H(
+ home,
+ away,
+ headers
+){
+
+ try{
+
+  return await cached(
+   `/fixtures/headtohead?h2h=${home}-${away}&last=10`,
+   headers
+  );
+
+ }catch(e){
+
+  return [];
+
+ }
+
+}
+
+
+/* =====================================================
+   GET INJURIES
+===================================================== */
+
+async function getInjuries(
+ team,
+ season,
+ headers
+){
+
+ try{
+
+  return await cached(
+   `/injuries?team=${team}&season=${season}`,
+   headers
+  );
+
+ }catch(e){
+
+  return [];
+
+ }
+
+}
+
+
+/* =====================================================
+   GET STANDINGS
+===================================================== */
+
+async function getStandings(
+ league,
+ season,
+ headers
+){
+
+ try{
+
+  const result =
+   await cached(
+    `/standings?league=${league}&season=${season}`,
+    headers
+   );
+
+  return result[0] || null;
+
+ }catch(e){
+
+  return null;
+
+ }
+
+}
+
+
+/* =====================================================
+   GET API PREDICTION
+===================================================== */
+
+async function getPrediction(
+ fixture,
+ headers
+){
+
+ try{
+
+  const result =
+   await cached(
+    `/predictions?fixture=${fixture}`,
+    headers
+   );
+
+  return result[0] || null;
+
+ }catch(e){
+
+  return null;
+
+ }
+
+}
+
+
+/* =====================================================
+   GET LINEUPS
+===================================================== */
+
+async function getLineups(
+ fixture,
+ headers
+){
+
+ try{
+
+  const result =
+   await cached(
+    `/fixtures/lineups?fixture=${fixture}`,
+    headers
+   );
+
+  return result;
+
+ }catch(e){
+
+  return [];
+
+ }
+
+}
+
+
+/* =====================================================
+   GET FIXTURE STATISTICS
+===================================================== */
+
+async function getFixtureStats(
+ fixture,
+ headers
+){
+
+ try{
+
+  const result =
+   await cached(
+    `/fixtures/statistics?fixture=${fixture}`,
+    headers
+   );
+
+  return result;
+
+ }catch(e){
+
+  return [];
+
+ }
+
+}
+
+
+/* =====================================================
+   ANALYZE MATCH
+===================================================== */
+
+async function analyzeMatch(
+ button,
+ fixture
+){
+
+ const key =
+  document.getElementById("api-key")
+   .value.trim();
+
+ if(!key){
+
+  alert("دخل API-Football Key أولاً");
+
+  return;
+
+ }
+
+
+ const card =
+  document.getElementById(
+   "match-"+fixture.fixture.id
+  );
+
+ const analysis =
+  card.querySelector(".analysis");
+
+ const buttonText =
+  button.innerHTML;
+
+
+ button.disabled=true;
+
+ button.innerHTML=
+  "🧠 جاري التحليل...";
+
+
+ analysis.style.display="block";
+
+ analysis.innerHTML=`
+
+  <div class="loading" style="display:block">
+
+   🧠 جمع البيانات:
+
+   <br><br>
+
+   Form • H2H • Injuries • Standings
+   <br>
+   Predictions • Lineups • Statistics
+   <br><br>
+
+   ⏳ المرجو الانتظار...
+
+  </div>
+
+ `;
+
+
+ const headers={
+  "x-apisports-key":key
+ };
+
+
+ const homeId=
+  fixture.teams.home.id;
+
+ const awayId=
+  fixture.teams.away.id;
+
+ const leagueId=
+  fixture.league.id;
+
+ const season=
+  fixture.league.season;
+
+ const fixtureId=
+  fixture.fixture.id;
+
+
+ try{
+
+  /*
+   Automatic data collection
+  */
+
+  const results =
+   await Promise.all([
+
+    getTeamStats(
+     homeId,
+     leagueId,
+     season,
+     headers
+    ),
+
+    getTeamStats(
+     awayId,
+     leagueId,
+     season,
+     headers
+    ),
+
+    getH2H(
+     homeId,
+     awayId,
+     headers
+    ),
+
+    getInjuries(
+     homeId,
+     season,
+     headers
+    ),
+
+    getInjuries(
+     awayId,
+     season,
+     headers
+    ),
+
+    getStandings(
+     leagueId,
+     season,
+     headers
+    ),
+
+    getPrediction(
+     fixtureId,
+     headers
+    ),
+
+    getLineups(
+     fixtureId,
+     headers
+    ),
+
+    getFixtureStats(
+     fixtureId,
+     headers
+    )
+
+  ]);
+
+
+  const data={
+
+   homeStats:results[0],
+
+   awayStats:results[1],
+
+   h2h:results[2],
+
+   homeInjuries:results[3],
+
+   awayInjuries:results[4],
+
+   standings:results[5],
+
+   apiPrediction:results[6],
+
+   lineups:
+    results[7].length
+     ? results[7]
+     : null,
+
+   fixtureStats:results[8],
+
+   homeName:
+    fixture.teams.home.name,
+
+   awayName:
+    fixture.teams.away.name
+
+  };
+
+
+  const prediction =
+   buildPrediction(data);
+
+
+  analysis.innerHTML =
+   renderAnalysis(
+    fixture,
+    prediction,
+    data
+   );
+
+
+  button.innerHTML=
+   "✓ ANALYZED";
+
+
+ }catch(error){
+
+  analysis.innerHTML=`
+
+   <div class="info error">
+
+    ❌ تعذر إكمال التحليل
+
+    <br><br>
+
+    ${escapeHtml(error.message)}
+
+   </div>
+
+  `;
+
+  button.innerHTML=buttonText;
+
+ }finally{
+
+  button.disabled=false;
+
+ }
+
+}
+
+
+/* =====================================================
+   RENDER ANALYSIS
+===================================================== */
+
+function renderAnalysis(
+ fixture,
+ p,
+ data
+){
+
+ let confidenceClass="conf-low";
+
+ if(p.confidence>=75){
+  confidenceClass="conf-high";
+ }else if(p.confidence>=60){
+  confidenceClass="conf-medium";
+ }
+
+
+ const apiAdvice =
+  data.apiPrediction?.predictions?.advice
+  || "غير متوفر";
+
+
+ const apiWinner =
+  data.apiPrediction?.predictions?.winner?.name
+  || "غير متوفر";
+
+
+ const apiUnder =
+  data.apiPrediction?.predictions?.under_over
+  || "غير متوفر";
+
+
+ const lineupStatus =
+  data.lineups
+   ? "متوفرة"
+   : "غير متوفرة قبل المباراة";
+
+
+ return`
+
+ <div class="best">
+
+  <small>
+   🏆 أقوى اختيار حسب البيانات الحالية
+  </small>
+
+  <strong>
+   ${p.best.name}
+  </strong>
+
+  <span>
+   Probability: ${pct(p.best.probability)}
+  </span>
+
+  <br>
+
+  <span class="confidence ${confidenceClass}">
+
+   MODEL CONFIDENCE ${pct(p.confidence)}
+
+  </span>
+
+ </div>
+
+
+ <div class="data-list">
+
+  <div class="data">
+
+   <small>جودة البيانات</small>
+
+   <b>${p.dataScore}/100</b>
+
+  </div>
+
+  <div class="data">
+
+   <small>Form المضيف</small>
+
+   <b>${Math.round(p.homeForm)}/100</b>
+
+  </div>
+
+  <div class="data">
+
+   <small>Form الضيف</small>
+
+   <b>${Math.round(p.awayForm)}/100</b>
+
+  </div>
+
+  <div class="data">
+
+   <small>Lineups</small>
+
+   <b>${lineupStatus}</b>
+
+  </div>
+
+ </div>
+
+
+ <div class="section">
+
+  <div class="section-title">
+   🎯 FINAL RESULT — 1X2
+  </div>
+
+  <table class="table">
+
+   <tr>
+    <td class="name">
+     ${fixture.teams.home.name}
+    </td>
+
+    <td class="value ${p.homeWin>=50?"hot":""}">
+     ${pct(p.homeWin)}
+    </td>
+   </tr>
+
+   <tr>
+    <td class="name">
+     X — Draw
+    </td>
+
+    <td class="value">
+     ${pct(p.draw)}
+    </td>
+   </tr>
+
+   <tr>
+    <td class="name">
+     ${fixture.teams.away.name}
+    </td>
+
+    <td class="value ${p.awayWin>=50?"hot":""}">
+     ${pct(p.awayWin)}
+    </td>
+   </tr>
+
+  </table>
+
+ </div>
+
+
+ <div class="section">
+
+  <div class="section-title">
+   🔐 DOUBLE CHANCE
+  </div>
+
+  <table class="table">
+
+   <tr>
+    <td class="name">1X</td>
+    <td class="value">${pct(p.double1X)}</td>
+   </tr>
+
+   <tr>
+    <td class="name">X2</td>
+    <td class="value">${pct(p.doubleX2)}</td>
+   </tr>
+
+   <tr>
+    <td class="name">12</td>
+    <td class="value">${pct(p.double12)}</td>
+   </tr>
+
+  </table>
+
+ </div>
+
+
+ <div class="section">
+
+  <div class="section-title">
+   ⚽ OVER / UNDER
+  </div>
+
+  <table class="table">
+
+   <tr>
+    <td class="name">Over 1.5</td>
+    <td class="value hot">${pct(p.over15)}</td>
+   </tr>
+
+   <tr>
+    <td class="name">Under 1.5</td>
+    <td class="value">${pct(p.under15)}</td>
+   </tr>
+
+   <tr>
+    <td class="name">Over 2.5</td>
+    <td class="value">${pct(p.over25)}</td>
+   </tr>
+
+   <tr>
+    <td class="name">Under 2.5</td>
+    <td class="value">${pct(p.under25)}</td>
+   </tr>
+
+   <tr>
+    <td class="name">Over 3.5</td>
+    <td class="value">${pct(p.over35)}</td>
+   </tr>
+
+   <tr>
+    <td class="name">Under 3.5</td>
+    <td class="value">${pct(p.under35)}</td>
+   </tr>
+
+  </table>
+
+ </div>
+
+
+ <div class="section">
+
+  <div class="section-title">
+   🥅 BTTS
+  </div>
+
+  <table class="table">
+
+   <tr>
+    <td class="name">
+     Goal / Goal
+    </td>
+
+    <td class="value">
+     ${pct(p.btts)}
+    </td>
+   </tr>
+
+   <tr>
+    <td class="name">
+     No Goal
+    </td>
+
+    <td class="value">
+     ${pct(p.noBtts)}
+    </td>
+   </tr>
+
+  </table>
+
+ </div>
+
+
+ <div class="section">
+
+  <div class="section-title">
+   🎯 EXACT SCORE — TOP PROBABILITIES
+  </div>
+
+  <div class="scores">
+
+   ${p.exact.map(x=>`
+
+    <div class="score">
+
+     <strong>
+      ${x.score}
+     </strong>
+
+     <small>
+      ${pct(x.probability)}
+     </small>
+
+    </div>
+
+   `).join("")}
+
+  </div>
+
+ </div>
+
+
+ <div class="section">
+
+  <div class="section-title">
+   🧠 API-FOOTBALL SIGNAL
+  </div>
+
+  <div class="info">
+
+   Winner:
+   <b>${escapeHtml(apiWinner)}</b>
+
+   <br>
+
+   Under/Over:
+   <b>${escapeHtml(apiUnder)}</b>
+
+   <br>
+
+   Advice:
+   <b>${escapeHtml(apiAdvice)}</b>
+
+  </div>
+
+ </div>
+
+
+ <div class="section">
+
+  <div class="section-title">
+   🩺 INJURIES
+  </div>
+
+  <div class="info">
+
+   ${fixture.teams.home.name}:
+   <b>${data.homeInjuries.length}</b>
+
+   لاعب/لاعبة مسجلين في قائمة الغياب
+
+   <br>
+
+   ${fixture.teams.away.name}:
+   <b>${data.awayInjuries.length}</b>
+
+   لاعب/لاعبة مسجلين في قائمة الغياب
+
+  </div>
+
+ </div>
+
+
+ <div class="section">
+
+  <div class="section-title">
+   🤝 HEAD TO HEAD
+  </div>
+
+  <div class="info">
+
+   ${
+    data.h2h.length
+     ? `تم تحليل آخر ${data.h2h.length} مواجهات متوفرة`
+     : "لا توجد H2H متاحة"
+   }
+
+  </div>
+
+ </div>
+
+
+ <div class="section">
+
+  <div class="section-title">
+   📊 EXPECTED GOALS
+  </div>
+
+  <div class="grid">
+
+   <div class="mini">
+
+    <label>
+     Expected ${fixture.teams.home.name}
+    </label>
+
+    <strong>
+     ${p.homeLambda.toFixed(2)}
+    </strong>
+
+   </div>
+
+
+   <div class="mini">
+
+    <label>
+     Expected ${fixture.teams.away.name}
+    </label>
+
+    <strong>
+     ${p.awayLambda.toFixed(2)}
+    </strong>
+
+   </div>
+
+  </div>
+
+ </div>
+
+
+ <div class="info warning">
+
+  ⚠️ هذه احتمالات إحصائية محسوبة من البيانات المتاحة،
+  وليست ضماناً 100% لنتيجة المباراة.
+
+  <br><br>
+
+  Exact Score بطبيعته أصعب سوق للتنبؤ،
+  لذلك يتم عرض الاحتمالات الحقيقية بدلاً من ادعاء أنها مؤكدة.
+
+ </div>
+
+ `;
+
+}
+
+
+/* =====================================================
+   LOAD FIXTURES
+===================================================== */
+
+async function loadFixtures(){
+
+ const key =
+  document.getElementById("api-key")
+   .value.trim();
+
+ const date =
+  document.getElementById("selected-date")
+   .value;
+
+ const result =
+  document.getElementById("result-box");
+
+ const loading =
+  document.getElementById("loading");
+
+
+ if(!key){
+
+  alert("دخل API-Football Key أولاً");
+
+  return;
+
+ }
+
+
+ if(!date){
+
+  alert("اختار التاريخ");
+
+  return;
+
+ }
+
+
+ localStorage.setItem(
+  "football_api_key",
+  key
+ );
+
+
+ result.innerHTML="";
+
+ loading.style.display="block";
+
+
+ const headers={
+  "x-apisports-key":key
+ };
+
+
+ try{
+
+  const fixtures =
+   await api(
+    `/fixtures?date=${date}&timezone=Africa/Casablanca`,
+    headers
+   );
+
+
+  loading.style.display="none";
+
+
+  if(!fixtures.length){
+
+   result.innerHTML=`
+
+    <div class="panel status">
+
+     ⚽ ما كايناش مباريات فهاد التاريخ.
+
+    </div>
+
+   `;
+
+   return;
+
+  }
+
+
+  const grouped={};
+
+
+  fixtures.forEach(f=>{
+
+   const leagueName =
+    `${f.league.country} - ${f.league.name}`;
+
+   if(!grouped[leagueName]){
+    grouped[leagueName]=[];
+   }
+
+   grouped[leagueName].push(f);
+
   });
 
-  function login() {
-    var u = document.getElementById("user-input").value.trim().toLowerCase();
-    var p = document.getElementById("pass-input").value.trim().toLowerCase();
-    if (u === "lahcen" && p === "lahcen") {
-      localStorage.setItem("lahcen_logged", "true");
-      showMain();
-    } else { alert("بيانات الدخول غير صحيحة!"); }
-  }
 
-  function logout() {
-    localStorage.removeItem("lahcen_logged");
-    document.getElementById("dashboard").style.display = "none";
-    document.getElementById("login-box").style.display = "block";
-  }
+  const leagues =
+   Object.keys(grouped)
+    .sort((a,b)=>a.localeCompare(b));
 
-  function showMain() {
-    document.getElementById("login-box").style.display = "none";
-    document.getElementById("dashboard").style.display = "block";
-  }
 
-  function saveApiKey() {
-    const key = document.getElementById("api-key").value.trim();
-    localStorage.setItem("football_api_key", key);
-  }
+  let html=`
 
-  function toggleLeague(id) {
-    const el = document.getElementById("league-content-" + id);
-    el.style.display = (el.style.display === "block") ? "none" : "block";
-  }
+   <div class="panel">
 
-  function formatMoroccanTime(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('fr-FR', {
-      timeZone: 'Africa/Casablanca',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    });
-  }
+    <div class="status">
 
-  async function loadMatchesByDate() {
-    const apiKey = document.getElementById("api-key").value.trim();
-    const selectedDate = document.getElementById("selected-date").value;
-    const resultBox = document.getElementById("result-box");
-    const loading = document.getElementById("loading");
+     🏆 ${leagues.length} بطولة
 
-    if (!apiKey) { alert("أدخل مفتاح API أولاً!"); return; }
-    if (!selectedDate) { alert("اختر التاريخ أولاً!"); return; }
+     • ⚽ ${fixtures.length} مباراة
 
-    resultBox.innerHTML = "";
-    loading.style.display = "block";
+     <br><br>
 
-    const headers = { "x-apisports-key": apiKey, "Content-Type": "application/json" };
+     اختار المباراة واضغط
+     <b>ANALYZE MATCH</b>
+     للحصول على التحليل العميق.
 
-    try {
-      const res = await fetch(`https://v3.football.api-sports.io/fixtures?date=${selectedDate}&timezone=Africa/Casablanca`, { headers });
-      const data = await res.json();
-      loading.style.display = "none";
+    </div>
 
-      if (!data.response || data.response.length === 0) {
-        resultBox.innerHTML = `<div style="text-align:center; padding: 20px; background:#111827; border-radius:12px;"><p style="color:#ef4444; font-weight:bold;">❌ لا توجد مباريات فـ هذا التاريخ (${selectedDate})</p></div>`;
-        return;
-      }
+   </div>
 
-      const groupedLeagues = {};
-      data.response.forEach(item => {
-        let leagueName = item.league.country + " - " + item.league.name;
-        if (!groupedLeagues[leagueName]) {
-          groupedLeagues[leagueName] = [];
-        }
-        groupedLeagues[leagueName].push(item);
-      });
+  `;
 
-      // 🔤 ترتيب أسماء الدوريات أبجدياً (A-Z)
-      const sortedLeagueNames = Object.keys(groupedLeagues).sort((a, b) => a.localeCompare(b));
 
-      let html = `<p style="text-align:center; color:#10b981; font-size:13px; font-weight:bold; margin-bottom:15px;">🏆 تم ترتيب ${sortedLeagueNames.length} بطولة أبجدياً (A-Z)</p>`;
+  let index=0;
 
-      let leagueIdx = 0;
-      sortedLeagueNames.forEach(leagueName => {
-        leagueIdx++;
-        let matches = groupedLeagues[leagueName];
 
-        html += `
-          <div class="league-accordion">
-            <button class="league-header-btn" onclick="toggleLeague(${leagueIdx})">
-              <span>🏆 ${leagueName}</span>
-              <span class="league-count">${matches.length} مباريات 🔽</span>
-            </button>
-            <div id="league-content-${leagueIdx}" class="league-content">
-        `;
+  leagues.forEach(leagueName=>{
 
-        matches.forEach(item => {
-          let homeName = item.teams.home.name;
-          let awayName = item.teams.away.name;
-          let id = item.fixture.id;
-          let matchTime = formatMoroccanTime(item.fixture.date);
+   index++;
 
-          let seed = (id + homeName.length * 7 + awayName.length * 11) % 100;
 
-          let p1 = 35 + (seed % 30);
-          let p2 = 25 + ((seed * 3) % 25);
-          let pX = 100 - (p1 + p2);
+   html+=`
 
-          let pPlus25 = 45 + (seed % 35);
-          let pMoins25 = 100 - pPlus25;
+    <div class="league">
 
-          let pGoal = 40 + ((seed * 2) % 40);
-          let pNoGoal = 100 - pGoal;
+     <button
+      class="league-head"
+      onclick="toggleLeague(${index})">
 
-          let pMF11 = Math.round(p1 * 0.65);
-          let pMFX1 = Math.round(p1 * 0.35);
-          let pMFXX = Math.round(pX * 0.70);
-          let pMF22 = Math.round(p2 * 0.65);
+      <span class="league-name">
 
-          let s21 = 18 + (seed % 10);
-          let s10 = 15 + (seed % 8);
-          let s11 = 14 + (seed % 6);
-          let s01 = 12 + (seed % 5);
-          let sOther = 100 - (s21 + s10 + s11 + s01);
+       🏆 ${escapeHtml(leagueName)}
 
-          html += `
-            <div class="match-card">
-              <div style="text-align: center;">
-                <span class="match-time">⏰ التوقيت: ${matchTime} (مغرب)</span>
-              </div>
-              
-              <div class="teams-header">${homeName} <span>VS</span> ${awayName}</div>
+      </span>
 
-              <div class="section-title">🎯 النتيجة النهائية (1X2)</div>
-              <table class="prob-table">
-                <tr><td class="prob-name">فوز المضيف (1)</td><td class="prob-val ${p1 > 45 ? 'highlight' : ''}">${p1}%</td></tr>
-                <tr><td class="prob-name">التعادل (X)</td><td class="prob-val">${pX}%</td></tr>
-                <tr><td class="prob-name">فوز الضيف (2)</td><td class="prob-val ${p2 > 45 ? 'highlight' : ''}">${p2}%</td></tr>
-              </table>
+      <span class="count">
 
-              <div class="section-title">⚽ الأهداف (2.5)</div>
-              <table class="prob-table">
-                <tr><td class="prob-name">Plus 2.5</td><td class="prob-val ${pPlus25 >= 50 ? 'highlight' : ''}">${pPlus25}%</td></tr>
-                <tr><td class="prob-name">Moins 2.5</td><td class="prob-val ${pMoins25 >= 50 ? 'highlight' : ''}">${pMoins25}%</td></tr>
-              </table>
+       ${grouped[leagueName].length}
 
-              <div class="section-title">🥅 BTTS (التسجيل للفريقين)</div>
-              <table class="prob-table">
-                <tr><td class="prob-name">Gool</td><td class="prob-val ${pGoal >= 50 ? 'highlight' : ''}">${pGoal}%</td></tr>
-                <tr><td class="prob-name">No Gool</td><td class="prob-val ${pNoGoal >= 50 ? 'highlight' : ''}">${pNoGoal}%</td></tr>
-              </table>
+      </span>
 
-              <div class="section-title">⏱️ الشوط الأول / النهائي (M/F)</div>
-              <table class="prob-table">
-                <tr><td class="prob-name">1 / 1</td><td class="prob-val">${pMF11}%</td></tr>
-                <tr><td class="prob-name">X / 1</td><td class="prob-val">${pMFX1}%</td></tr>
-                <tr><td class="prob-name">X / X</td><td class="prob-val">${pMFXX}%</td></tr>
-                <tr><td class="prob-name">2 / 2</td><td class="prob-val">${pMF22}%</td></tr>
-              </table>
+     </button>
 
-              <div class="section-title">📌 النتيجة الدقيقة (Score Exacte)</div>
-              <table class="prob-table">
-                <tr><td class="prob-name">2 - 1</td><td class="prob-val highlight">${s21}%</td></tr>
-                <tr><td class="prob-name">1 - 0</td><td class="prob-val">${s10}%</td></tr>
-                <tr><td class="prob-name">1 - 1</td><td class="prob-val">${s11}%</td></tr>
-                <tr><td class="prob-name">0 - 1</td><td class="prob-val">${s01}%</td></tr>
-                <tr><td class="prob-name">نتائج أخرى</td><td class="prob-val">${sOther}%</td></tr>
-              </table>
-            </div>
-          `;
-        });
 
-        html += `</div></div>`;
-      });
+     <div
+      id="league-${index}"
+      class="league-content">
 
-      resultBox.innerHTML = html;
+   `;
 
-    } catch (error) {
-      loading.style.display = "none";
-      resultBox.innerHTML = `<p style="text-align:center; color:#ef4444; padding:15px;">❌ خطأ ف الاتصال: ${error.message}</p>`;
-    }
-  }
+
+   grouped[leagueName].forEach(f=>{
+
+    const fixtureId =
+     f.fixture.id;
+
+
+    const status =
+     f.fixture.status.short;
+
+
+    const scheduled =
+     ["NS","TBD"].includes(status);
+
+
+    html+=`
+
+     <div
+      class="match"
+      id="match-${fixtureId}">
+
+
+      <div class="match-top">
+
+       <span class="time">
+
+        ⏰
+        ${moroccoTime(f.fixture.date)}
+        🇲🇦
+
+       </span>
+
+       <span class="status-live">
+
+        ${scheduled
+         ?"● UPCOMING"
+         :"● "+escapeHtml(status)}
+
+       </span>
+
+      </div>
+
+
+      <div class="teams">
+
+       <div class="team">
+
+        ${escapeHtml(
+         f.teams.home.name
+        )}
+
+       </div>
+
+
+       <div class="vs">
+
+        VS
+
+       </div>
+
+
+       <div class="team">
+
+        ${escapeHtml(
+         f.teams.away.name
+        )}
+
+       </div>
+
+      </div>
+
+
+      <button
+       class="analyze"
+       onclick='analyzeMatch(this,${JSON.stringify(f).replace(/'/g,"&#39;")})'
+       ${scheduled?"":"disabled"}>
+
+       ${
+        scheduled
+         ?"🧠 ANALYZE MATCH"
+         :"⛔ MATCH NOT UPCOMING"
+       }
+
+      </button>
+
+
+      <div class="analysis"></div>
+
+
+     </div>
+
+    `;
+
+   });
+
+
+   html+=`
+
+     </div>
+
+    </div>
+
+   `;
+
+  });
+
+
+  result.innerHTML=html;
+
+
+ }catch(error){
+
+  loading.style.display="none";
+
+
+  result.innerHTML=`
+
+   <div class="panel status error">
+
+    ❌ API ERROR
+
+    <br><br>
+
+    ${escapeHtml(error.message)}
+
+   </div>
+
+  `;
+
+ }
+
+}
+
+
+/* =====================================================
+   ACCORDION
+===================================================== */
+
+function toggleLeague(id){
+
+ const el =
+  document.getElementById(
+   "league-"+id
+  );
+
+ if(!el)return;
+
+ el.style.display =
+  el.style.display==="block"
+   ?"none"
+   :"block";
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+ return String(value ?? "")
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
+
+}
+
 </script>
+
 </body>
 </html>

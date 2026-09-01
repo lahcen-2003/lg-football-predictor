@@ -43,14 +43,14 @@ button{cursor:pointer;}
 .vs{width:42px;height:42px;margin:auto;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#060a11;color:var(--gold);border:1px solid rgba(245,185,66,.25);font-size:9px;}
 .analyze{width:100%;padding:11px;border:0;border-radius:11px;background:linear-gradient(90deg,#c98a22,#ffd66e,#d99a27);color:#080808;font-size:9px;font-weight:900;}
 .analysis{display:none;margin-top:12px;border-top:1px solid rgba(255,255,255,.06);padding-top:12px;}
-.best{text-align:center;padding:14px;border-radius:15px;background:linear-gradient(145deg,rgba(245,185,66,.12),rgba(245,185,66,.025));border:1px solid rgba(245,185,66,.22);margin-bottom:8px;}
-.best small{color:var(--muted);font-size:8px;}
-.best strong{display:block;color:var(--gold2);font-size:22px;}
-.best span{color:#4ade80;font-size:9px;}
+.best{text-align:center;padding:14px;border-radius:15px;background:linear-gradient(145deg,rgba(245,185,66,.12),rgba(245,185,66,.025));border:1px solid rgba(245,185,66,.22);margin-bottom:10px;}
+.best small{color:var(--muted);font-size:8px;display:block;margin-bottom:2px;}
+.best strong{display:block;color:var(--gold2);font-size:20px;font-weight:900;}
+.best span{color:#4ade80;font-size:9px;font-weight:800;}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:8px;}
 .mini{padding:9px;border-radius:11px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);}
-.mini label{display:block;color:var(--muted);font-size:7px;}
-.mini strong{font-size:11px;}
+.mini label{display:block;color:var(--muted);font-size:8px;margin-bottom:2px;}
+.mini strong{font-size:11px;color:#fff;}
 .info{margin-top:8px;padding:10px;border-radius:9px;text-align:center;font-size:9px;font-weight:700;}
 .error{color:#f87171;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);}
 </style>
@@ -91,7 +91,7 @@ button{cursor:pointer;}
    <button class="gold" onclick="loadFixtures()">🔎 عرض مباريات اليوم وتحضير التحليل</button>
   </div>
 
-  <div id="loading" class="loading">🧠 جاري تحميل المباريات وتنسيق القوائم...</div>
+  <div id="loading" class="loading">🧠 جاري جلب وترتيب القوائم أبجدياً (A-Z)...</div>
   <div id="result-box"></div>
  </div>
 </div>
@@ -161,13 +161,12 @@ function extractTeamStats(stats){
  return null;
 }
 
-function buildPrediction(homeStats, awayStats, homeId, awayId){
+function buildDetailedPrediction(homeStats, awayStats, homeId, awayId){
  let hG = extractTeamStats(homeStats);
  let aG = extractTeamStats(awayStats);
 
- // حساب قيم أهداف ديناميكية بناءً على معرفات الفريق لمنع تكرار النسب عند غياب الإحصائيات
  if(!hG){
-  const baseH = ((homeId % 17) + 10) / 10;
+  const baseH = ((homeId % 15) + 10) / 10;
   hG = { scored: baseH, conceded: 1.2 };
  }
  if(!aG){
@@ -178,29 +177,56 @@ function buildPrediction(homeStats, awayStats, homeId, awayId){
  let homeLambda = clamp(hG.scored * 0.55 + aG.conceded * 0.45, 0.3, 3.2);
  let awayLambda = clamp(aG.scored * 0.55 + hG.conceded * 0.45, 0.3, 3.2);
 
- let homeWin = 0, draw = 0, awayWin = 0, btts = 0;
+ let homeWin = 0, draw = 0, awayWin = 0, goalProb = 0;
+ let scores = [];
 
- for(let h = 0; h <= 6; h++){
-  for(let a = 0; a <= 6; a++){
+ for(let h = 0; h <= 5; h++){
+  for(let a = 0; a <= 5; a++){
    const p = poisson(homeLambda, h) * poisson(awayLambda, a);
    if(h > a) homeWin += p;
    else if(h === a) draw += p;
    else awayWin += p;
-   if(h > 0 && a > 0) btts += p;
+   if(h > 0 && a > 0) goalProb += p;
+
+   scores.push({ score: `${h} - ${a}`, prob: p, h, a });
   }
  }
 
- homeWin *= 100; draw *= 100; awayWin *= 100; btts *= 100;
+ scores.sort((a,b) => b.prob - a.prob);
+ const bestScore = scores[0];
 
- const candidates = [
-  { name: "1 (فوز المضيف)", probability: homeWin },
-  { name: "X2 (تعادل أو فوز الضيف)", probability: draw + awayWin },
-  { name: "1X (فوز المضيف أو تعادل)", probability: homeWin + draw },
-  { name: "2 (فوز الضيف)", probability: awayWin },
-  { name: "BTTS (كلا الفريقين يسجل)", probability: btts }
- ].sort((a,b) => b.probability - a.probability);
+ homeWin *= 100; draw *= 100; awayWin *= 100; goalProb *= 100;
+ const noGoalProb = 100 - goalProb;
 
- return { homeWin, draw, awayWin, btts, best: candidates[0] };
+ // تحديد النتيجة الشوط الأول / النهائية (M/F)
+ let htFt = "1 / 1";
+ if(homeWin > 55) htFt = "1 / 1";
+ else if(awayWin > 55) htFt = "2 / 2";
+ else if(draw > 40) htFt = "X / X";
+ else if(homeWin > awayWin) htFt = "X / 1";
+ else htFt = "X / 2";
+
+ // التوقع النهائي الدقيق
+ let finalPick = "1X";
+ let finalConfidence = Math.max(homeWin, awayWin) + (draw * 0.5);
+
+ if(homeWin >= 58) { finalPick = "1"; finalConfidence = homeWin; }
+ else if(awayWin >= 58) { finalPick = "2"; finalConfidence = awayWin; }
+ else if(goalProb >= 62) { finalPick = "Gool (BTTS)"; finalConfidence = goalProb; }
+ else if(homeWin > awayWin) { finalPick = "1X"; }
+ else { finalPick = "X2"; }
+
+ return {
+  exactScore: bestScore.score,
+  goal: goalProb,
+  noGoal: noGoalProb,
+  mf: htFt,
+  p1: homeWin,
+  pX: draw,
+  p2: awayWin,
+  finalPick: finalPick,
+  finalConfidence: finalConfidence
+ };
 }
 
 async function loadFixtures(){
@@ -225,7 +251,6 @@ async function loadFixtures(){
    return;
   }
 
-  // تجميع المباريات حسب البطولة
   const leagues = {};
   fixtures.forEach(f => {
    const lName = f.league.name;
@@ -233,14 +258,14 @@ async function loadFixtures(){
    leagues[lName].push(f);
   });
 
-  // 1. ترتيب البطولات أبجدياً (A-Z)
+  // 1. ترتيب البطولات أبجدياً A-Z
   const sortedLeagueNames = Object.keys(leagues).sort((a, b) => a.localeCompare(b));
 
   let html = "";
   sortedLeagueNames.forEach(leagueName => {
    const matches = leagues[leagueName];
 
-   // 2. ترتيب المباريات داخل البطولة أبجدياً بناءً على اسم الفريق المضيف (A-Z)
+   // 2. ترتيب المباريات أبحدياً A-Z بناءً على الفريق المضيف
    matches.sort((a, b) => a.teams.home.name.localeCompare(b.teams.home.name));
 
    html += `
@@ -265,7 +290,7 @@ async function loadFixtures(){
       <div class="team">${m.teams.away.name}</div>
      </div>
      <button class="analyze" onclick="analyzeMatch(${m.fixture.id}, ${m.teams.home.id}, ${m.teams.away.id}, ${m.league.id}, ${m.league.season}, this)">
-      🤖 تحليل المباراة بالذكاء الاصطناعي
+      🤖 تحليل مباراة المدى والنسب
      </button>
      <div id="analysis-${m.fixture.id}" class="analysis"></div>
     </div>`;
@@ -292,12 +317,11 @@ async function analyzeMatch(fixtureId, homeId, awayId, leagueId, season, btn){
  const box = document.getElementById(`analysis-${fixtureId}`);
 
  btn.disabled = true;
- btn.innerText = "جاري التحليل الحسابي...";
+ btn.innerText = "جاري إجراء التحليل العميق...";
 
  try{
   let homeStats = null, awayStats = null;
   
-  // تجنب توقف الكود عند عدم وجود إحصائيات من الـ API
   try {
    const resH = await fetchAPI(`/teams/statistics?season=${season}&team=${homeId}&league=${leagueId}`, apiKey);
    if(resH && resH.goals) homeStats = resH;
@@ -308,19 +332,23 @@ async function analyzeMatch(fixtureId, homeId, awayId, leagueId, season, btn){
    if(resA && resA.goals) awayStats = resA;
   } catch(e){}
 
-  const pred = buildPrediction(homeStats, awayStats, homeId, awayId);
+  const pred = buildDetailedPrediction(homeStats, awayStats, homeId, awayId);
 
   box.innerHTML = `
    <div class="best">
-    <small>التوقع الرئيسي الموصى به</small>
-    <strong>${pred.best.name}</strong>
-    <span>نسبة النجاح المتوقعة: ${pct(pred.best.probability)}</span>
+    <small>Prédiction Final Et Exacte لي تلعب</small>
+    <strong>${pred.finalPick}</strong>
+    <span>نسبة الدقة المتوقعة: ${pct(pred.finalConfidence)}</span>
    </div>
+   
    <div class="grid">
-    <div class="mini"><label>1 (فوز صاحب الأرض)</label><strong>${pct(pred.homeWin)}</strong></div>
-    <div class="mini"><label>X (التعادل)</label><strong>${pct(pred.draw)}</strong></div>
-    <div class="mini"><label>2 (فوز الضيف)</label><strong>${pct(pred.awayWin)}</strong></div>
-    <div class="mini"><label>BTTS (كلا الفريقين يسجل)</label><strong>${pct(pred.btts)}</strong></div>
+    <div class="mini"><label>Score Exacte (النتيجة الأقرب)</label><strong>🎯 ${pred.exactScore}</strong></div>
+    <div class="mini"><label>M / F (شوط / مباراة)</label><strong>⚖️ ${pred.mf}</strong></div>
+    <div class="mini"><label>Gool (تسجيل الطرفين)</label><strong>⚽ ${pct(pred.goal)}</strong></div>
+    <div class="mini"><label>No Gool (عدم تسجيل الطرفين)</label><strong>🚫 ${pct(pred.noGoal)}</strong></div>
+    <div class="mini"><label>1 (فوز صاحب الأرض)</label><strong>${pct(pred.p1)}</strong></div>
+    <div class="mini"><label>X (التعادل)</label><strong>${pct(pred.pX)}</strong></div>
+    <div class="mini"><label>2 (فوز الفريق الضيف)</label><strong>${pct(pred.p2)}</strong></div>
    </div>`;
 
   box.style.display = "block";
@@ -330,7 +358,7 @@ async function analyzeMatch(fixtureId, homeId, awayId, leagueId, season, btn){
  }catch(err){
   btn.disabled = false;
   btn.innerText = "إعادة التحليل 🔄";
-  box.innerHTML = `<div class="info error">تعذر جلب بيانات المباراة الحالية: ${err.message}</div>`;
+  box.innerHTML = `<div class="info error">تعذر إجراء التحليل: ${err.message}</div>`;
   box.style.display = "block";
  }
 }
